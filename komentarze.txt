@@ -1,0 +1,148 @@
+stworz kopie postaci
+odczytaj liste dostepnych
+dla kazdego z listy:
+    jesli koszt==1
+        sprawdz set
+        jesli set zgadza sie z lista:
+            sprawdz mainstat
+                jesli mainstat zgadza sie z lista:
+                    jesli ilosc cost1 < 2:
+                        dodaj do listy cost 1
+                        zaznacz ilosc cost 1
+                        wylacz bonusy artefaktow
+                        dodaj do ekwipunku postaci
+                        wlacz bonusy artefaktow
+                    jesli ilosc cost1 == 2:
+                        sprawdz nazwe
+                        jesli nazwa pokrywa sie z ekwipunkiem:
+                            stworz deepcopy postaci
+                            wylacz bonusy artefaktow
+                            dodaj nowy do ekwipunku
+                            wlacz bonusy artefaktow
+                            policz damage ze starym
+                            policz damage z nowym
+                            jesli damage z nowym > damge z starym:
+                                wylacz bonusy artefaktow
+                                zamienc stary na nowy
+                                wlacz bonusy artefaktow
+                        jesli nazwa sie nie pokrywa:
+                            stworz deepcopy postaci 1
+                            stworz deepcopy postaci 2
+                            dla kazdej kopii:
+                                wylacz bonusy artefaktow
+                                dodaj nowy do ekwipunku (na slot 1 i 2)
+                                wlacz bonusy artefaktow
+                            policz damage dla kopii 1,2 i oryginalu
+                            jesli damage kopii 1 > damage kopii 2:
+                                jesli damage oryginalu < damage kopii 1:
+                                    wylacz bonusy artefaktow
+                                    zamienc stary na nowy na odpowiedni slot
+                                    wlacz bonusy artefaktow
+                            else:  
+                                jesli damage oryginalu < damage kopii 2:
+                                    wylacz bonusy artefaktow
+                                    zamienc stary na nowy na odpowiedni slot
+                                    wlacz bonusy artefaktow
+                elif ilosc cost1 < 2:
+                    dodaj do listy cost 1
+                    zaznacz ilosc cost 1
+                    wylacz bonusy artefaktow
+                    dodaj do ekwipunku postaci
+                    wlacz bonusy artefaktow
+        
+            
+    jesli koszt == 3:
+        sprawdz mainstat
+        jesli mainstat zgadza sie z lista:
+            jesli ilosc cost3 < 2:
+                dodaj do listy cost 3
+                zaznacz ilosc cost 3
+                wylacz bonusy artefaktow
+                dodaj do ekwipunku postaci
+                wlacz bonusy artefaktow
+            jesli ilosc cost3 == 2:
+                sprawdz nazwe
+                jesli nazwa pokrywa sie z ekwipunkiem:
+                    stworz deepcopy postaci
+                    wylacz bonusy artefaktow
+                    dodaj nowy do ekwipunku
+                    wlacz bonusy artefaktow
+                    policz damage ze starym
+                    policz damage z nowym
+                    jesli damage z nowym > damge z starym:
+                        wylacz bonusy artefaktow
+                        zamienc stary na nowy
+                        wlacz bonusy artefaktow
+                jesli nazwa sie nie pokrywa:
+                    stworz deepcopy postaci 1
+                    stworz deepcopy postaci 2
+                    dla kazdej kopii:
+                        wylacz bonusy artefaktow
+                        dodaj nowy do ekwipunku (na slot 1 i 2)
+                        wlacz bonusy artefaktow
+                    policz damage dla kopii 1,2 i oryginalu
+                    jesli damage kopii 1 > damage kopii 2:
+                        jesli damage oryginalu < damage kopii 1:
+                            wylacz bonusy artefaktow
+                            zamienc stary na nowy na odpowiedni slot
+                            wlacz bonusy artefaktow
+                    else:  
+                        jesli damage oryginalu < damage kopii 2:
+                            wylacz bonusy artefaktow
+                            zamienc stary na nowy na odpowiedni slot
+                            wlacz bonusy artefaktow
+        elif ilosc cost3 <2:
+            dodaj do listy cost 3
+            zaznacz ilosc cost 3
+            wylacz bonusy artefaktow
+            dodaj do ekwipunku postaci
+            wlacz bonusy artefaktow
+
+    jesli koszt == 4:
+        sprawdz mainstat
+        jesli mainstat zgadza sie z lista:
+            jesli ilosc cost4 == 0:
+                dodaj do listy cost 4
+                zaznacz ilosc cost 4
+                wylacz bonusy artefaktow
+                dodaj do ekwipunku postaci
+                wlacz bonusy artefaktow
+            jesli ilosc cost4 == 1:
+                sprawdz nazwe
+                jesli nazwa pokrywa sie z ekwipunkiem:
+                    stworz deepcopy postaci
+                    wylacz bonusy artefaktow
+                    dodaj nowy do ekwipunku
+                    wlacz bonusy artefaktow
+                    policz damage ze starym
+                    policz damage z nowym
+                    jesli damage z nowym > damge z starym:
+                        wylacz bonusy artefaktow
+                        zamienc stary na nowy
+                        wlacz bonusy artefaktow
+                jesli nazwa sie nie pokrywa:
+                    stworz deepcopy postaci 1
+                    stworz deepcopy postaci 2
+                    dla kazdej kopii:
+                        wylacz bonusy artefaktow
+                        dodaj nowy do ekwipunku (na slot 1 i 2)
+                        wlacz bonusy artefaktow
+                    policz damage dla kopii 1,2 i oryginalu
+                    jesli damage kopii 1 > damage kopii 2:
+                        jesli damage oryginalu < damage kopii 1:
+                            wylacz bonusy artefaktow
+                            zamienc stary na nowy na odpowiedni slot
+                            wlacz bonusy artefaktow
+                    else:  
+                        jesli damage oryginalu < damage kopii 2:
+                            wylacz bonusy artefaktow
+                            zamienc stary na nowy na odpowiedni slot
+                            wlacz bonusy artefaktow
+        elif ilosc cost4 == 0:
+            dodaj do listy cost 4
+            zaznacz ilosc cost 4
+            wylacz bonusy artefaktow
+            dodaj do ekwipunku postaci
+            wlacz bonusy artefaktow
+oblicz damage dla postaci
+zwroc damage dla postaci
