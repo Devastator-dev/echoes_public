@@ -197,10 +197,10 @@ for i in full_sets:
 mainstats_probability_cost_1_weights=[1,1,1]
 
 
-mainstats_probability_cost_3_weights=[0.13,0.13,0.13,0.87143,0.87143,0.87143,0.87143,0.87143,0.87143,0.87143]
+mainstats_probability_cost_3_weights=[0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1]
 
 
-mainstats_probability_cost_4_weights=[0.2,0.2,0.2,0.1333333,0.1333333,0.1333333]
+mainstats_probability_cost_4_weights=[0.1666,0.1666,0.1666,0.1666,0.1666,0.1666]
 
 
 
@@ -221,7 +221,7 @@ sub_skill_dmg='sub_sk_DMG'
 sub_ult_dmg='sub_ult_DMG'
 
 substats=[sub_hp,sub_atk,sub_def,sub_hp_p,sub_atk_p,sub_def_p,sub_basic_dmg,sub_heavy_dmg,sub_skill_dmg,sub_ult_dmg,sub_er,sub_cr,sub_cd]
-substats_weights=[10,10,10,7.85714,7.85714,7.85714,5,5,5,7.85715,7.85715,7.85714,7.85714]
+substats_weights=np.ones(13)*(1/13)
 
 
 substat_val_weights=[7.33,14.65,19.54,23.51,15.63,10.42,5.95,2.98]
@@ -383,7 +383,7 @@ class Echo:
 
     def _roll_substats(self):
         result=[]
-        sub_choice=np.random.choice(np.array(substats),5,False,(np.array(substats_weights)/100))
+        sub_choice=np.random.choice(np.array(substats),5,False,substats_weights)
         for i in sub_choice:
             if len(sub_val_dict[i])>4:
                 value_choice=random.choices(sub_val_dict[i],substat_val_weights)
