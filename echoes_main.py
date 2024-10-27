@@ -1249,10 +1249,10 @@ class Inventory():
         character._ult_dmg=max(character._ult_dmg,0)
         character._heavy_dmg=max(character._heavy_dmg,0)
         character.check_set()
-        for l in range(150):
+        for l in range(1500):
             damage_final+=damage_function(character)
         
-        return damage_final/150
+        return damage_final/1500
 
 
 
