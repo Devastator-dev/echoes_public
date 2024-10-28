@@ -275,7 +275,16 @@ desired_mainstats_list_1cost_dps=(main_atk_p)
 desired_mainstats_list_3cost_havoc_dps=(main_ha_dmg,main_atk_p)
 desired_mainstats_list_4cost_dps=(main_cd,main_cr,main_atk_p)
 
+desired_mainstats_list_3cost_electro_dps=(main_el_dmg,main_atk_p)
+
+
 desired_mainstats_list_havoc_dps=[desired_mainstats_list_1cost_dps,desired_mainstats_list_3cost_havoc_dps,desired_mainstats_list_4cost_dps]
+
+desired_mainstats_list_electro_dps=[desired_mainstats_list_1cost_dps,desired_mainstats_list_3cost_electro_dps,desired_mainstats_list_4cost_dps]
+
+
+
+
 
 echo_amounts_in_overworld={
  'W27': 39,

@@ -83,5 +83,121 @@ def calculate_hrover_combo_damage(character:ech.Character)->float:
     return total_damage
 
 
-def calculate_xiangli_yao_combo_damage(character:ech.Character)->float: # TODO
+def calculate_xiangli_yao_combo_damage(character:ech.Character)->float:
+    """
+    Calculates damage of xiangli yao combo:
+
+    Intro   2x 2 hits total \n
+    Ultimate: Cogiation Model   1x 3 hits total \n
+    Ultimate: Skill: Divergence     5x 8 hits total  \n
+    Forte: Mid-Air Attack: Revamp   6x 14 hits total \n
+    Forte: Skill: Law of Reigns    5x 19 hits total \n
+    Ultimate: Basic: Pivot - Impale P1  1x 20 hits total \n
+    Ultimate: Basic: Pivot - Impale P2  4x 24 hits total \n
+    Ultimate: Basic: Pivot - Impale P3  2x 26 hits total \n
+    Forte: Skill: Law of Reigns    5x 31 hits total \n
+    Ultimate: Skill: Divergence     5x 36 hits total \n
+    Forte: Mid-Air Attack: Revamp   6x 42 hits total \n
+    Forte: Skill: Law of Reigns (Swap-Cancel)   5x 47 hits total \n
+    Outro   3x 50 hits total \n
+    """
+    total_damage=0
+    crit=[]
+    for i in range(50):
+        w=np.random.random()
+        if w<(character._total_cr/100):
+            crit.append(1)
+        else:
+            crit.append(0)
+
+    total_damage+=0.9941*character._total_attack*(1+(character._total_elem_dmg/100))*(1+(((character._total_cd/100)-1)*crit[0]))
+    total_damage+=0.9941*character._total_attack*(1+(character._total_elem_dmg/100))*(1+(((character._total_cd/100)-1)*crit[1]))
+
+    total_damage+=14.6606*character._total_attack*(1+((character._total_elem_dmg+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[2]))
+
+    total_damage+=0.4959*character._total_attack*(1+((character._total_elem_dmg+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[3]))
+    total_damage+=0.4959*character._total_attack*(1+((character._total_elem_dmg+5+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[4]))
+    total_damage+=0.4959*character._total_attack*(1+((character._total_elem_dmg+5+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[5]))
+    total_damage+=1.7355*character._total_attack*(1+((character._total_elem_dmg+5+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[6]))
+    total_damage+=1.7355*character._total_attack*(1+((character._total_elem_dmg+5+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[7]))
+
+    total_damage+=0.2187*character._total_attack*(1+((character._total_elem_dmg+5+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[8]))
+    total_damage+=0.2187*character._total_attack*(1+((character._total_elem_dmg+5+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[9]))
+    total_damage+=0.2187*character._total_attack*(1+((character._total_elem_dmg+5+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[10]))
+    total_damage+=0.2187*character._total_attack*(1+((character._total_elem_dmg+5+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[11]))
+    total_damage+=0.6561*character._total_attack*(1+((character._total_elem_dmg+5+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[12]))
+    total_damage+=0.6561*character._total_attack*(1+((character._total_elem_dmg+5+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[13]))
+
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+5+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[14]))
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+10+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[15]))
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+10+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[16]))
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+10+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[17]))
+    total_damage+=2.5528*character._total_attack*(1+((character._total_elem_dmg+10+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[18]))
+
+    total_damage+=1.1967*character._total_attack*(1+((character._total_elem_dmg+10+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[19]))
+
+    total_damage+=0.6092*character._total_attack*(1+((character._total_elem_dmg+10+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[20]))
+    total_damage+=0.6092*character._total_attack*(1+((character._total_elem_dmg+10+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[21]))
+    total_damage+=0.6092*character._total_attack*(1+((character._total_elem_dmg+10+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[22]))
+    total_damage+=0.6092*character._total_attack*(1+((character._total_elem_dmg+10+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[23]))
+
+    total_damage+=1.3325*character._total_attack*(1+((character._total_elem_dmg+10+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[24]))
+    total_damage+=1.3325*character._total_attack*(1+((character._total_elem_dmg+10+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[25]))
+
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+10+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[26]))
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[27]))
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[28]))
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[29]))
+    total_damage+=2.5528*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[30]))
+
+    total_damage+=0.4959*character._total_attack*(1+((character._total_elem_dmg+15+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[31]))
+    total_damage+=0.4959*character._total_attack*(1+((character._total_elem_dmg+15+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[32]))
+    total_damage+=0.4959*character._total_attack*(1+((character._total_elem_dmg+15+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[33]))
+    total_damage+=1.7355*character._total_attack*(1+((character._total_elem_dmg+15+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[34]))
+    total_damage+=1.7355*character._total_attack*(1+((character._total_elem_dmg+15+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[35]))
+
+    total_damage+=0.2187*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[36]))
+    total_damage+=0.2187*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[37]))
+    total_damage+=0.2187*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[38]))
+    total_damage+=0.2187*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[39]))
+    total_damage+=0.6561*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[40]))
+    total_damage+=0.6561*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[41]))
+
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+15+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[42]))
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+20+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[43]))
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+20+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[44]))
+    total_damage+=0.9573*character._total_attack*(1+((character._total_elem_dmg+20+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[45]))
+    total_damage+=2.5528*character._total_attack*(1+((character._total_elem_dmg+20+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[46]))
+
+    total_damage+=2.3763*character._total_attack*(1+((character._total_elem_dmg+15+character._outro_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[47]))
+    total_damage+=2.3763*character._total_attack*(1+((character._total_elem_dmg+15+character._outro_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[48]))
+    total_damage+=2.3763*character._total_attack*(1+((character._total_elem_dmg+15+character._outro_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[49]))
+
+    return total_damage
+
+
+
+def calculate_jinshi_combo_damage(character:ech.Character)->float:
+    """
+    Intro 
+    Ultimate
+    Skill: Overflowing Radiance
+    Incarnation: Skill: Crescent Divinity
+    Incarnation: Basic P1
+    Incarnation: Basic P2
+    Incarnation: Basic P3
+    Incarnation: Basic P4
+    Skill: Illuminous Ephiphany
+    Outro (Swap to another character to build Concerto and wait for cooldowns)
+    Intro
+    Skill: Overflowing Radiance
+    Incarnation: Skill: Crescent Divinity
+    Incarnation: Basic P1
+    Incarnation: Basic P2
+    Incarnation: Basic P3
+    Incarnation: Basic P4
+    Skill: Illuminous Ephiphany Star DMG
+    Skill: Illuminous Ephiphany Sun DMG
+    Outro
+    """
     pass
