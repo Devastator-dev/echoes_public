@@ -258,6 +258,8 @@ sub_val_dict[sub_er]=sub_er_val
 weapon_abyss_surges='abyss_surges'
 weapon_blazing_brilliance = 'blazing_brilliance'
 weapon_emerald_of_genesis = 'emerald_of_genesis'
+weapon_ages_of_harvest='ages_of_harvest'
+weapon_lustrous_razor='lustrous_razor'
 
 
 
@@ -268,6 +270,8 @@ weapons_stats_dict={}
 weapons_stats_dict[weapon_abyss_surges]=[587,(36.4,sub_atk_p),(12.8,sub_er),(10,sub_basic_dmg),(10,sub_skill_dmg)]
 weapons_stats_dict[weapon_blazing_brilliance] = [587, (48.6, sub_cd),(12, sub_atk_p),(56, sub_skill_dmg)]
 weapons_stats_dict[weapon_emerald_of_genesis]=[587, (24.3, sub_cr), (12.8, sub_er),(12, sub_atk_p)]
+weapons_stats_dict[weapon_ages_of_harvest]=[587,(24.4, sub_cr),(48,sub_skill_dmg),(12,weap_elem_dmg)]
+weapons_stats_dict[weapon_lustrous_razor]=[587,(12.8,sub_er),(21,sub_ult_dmg)]
 
 
 
@@ -277,13 +281,16 @@ desired_mainstats_list_4cost_dps=(main_cd,main_cr,main_atk_p)
 
 desired_mainstats_list_3cost_electro_dps=(main_el_dmg,main_atk_p)
 
+desired_mainstats_list_3cost_spectro_dps=(main_sp_dmg,main_atk_p)
+
 
 desired_mainstats_list_havoc_dps=[desired_mainstats_list_1cost_dps,desired_mainstats_list_3cost_havoc_dps,desired_mainstats_list_4cost_dps]
+
 
 desired_mainstats_list_electro_dps=[desired_mainstats_list_1cost_dps,desired_mainstats_list_3cost_electro_dps,desired_mainstats_list_4cost_dps]
 
 
-
+desired_mainstats_list_spectro_dps=[desired_mainstats_list_1cost_dps,desired_mainstats_list_3cost_spectro_dps,desired_mainstats_list_4cost_dps]
 
 
 echo_amounts_in_overworld={
@@ -971,7 +978,7 @@ class Inventory():
                                         self._calculated_damage=damage_old
                                     if damage_new>damage_old:
                                         if damage_new>self._calculated_damage:
-                                            print('damage new:',damage_new,'damage old:', damage_old)
+                                            #print('damage new:',damage_new,'damage old:', damage_old)
                                             character.disable_echo_bonuses()
                                             character._inventory.remove(j)
                                             character._inventory.append(i)
@@ -1019,7 +1026,7 @@ class Inventory():
                             if damage_1>damage_2:
                                 if damage_1>damage_old:
                                     if damage_1>self._calculated_damage:
-                                        print('damage new 1:',damage_1,'damage old:', damage_old)
+                                        #print('damage new 1:',damage_1,'damage old:', damage_old)
                                         rem=copy.deepcopy(character._equipped_echoes_cost1[0])
                                         character.disable_echo_bonuses()
                                         for l in character._inventory:
@@ -1042,7 +1049,7 @@ class Inventory():
                             else:
                                 if damage_2>damage_old:
                                     if damage_2>self._calculated_damage:
-                                        print('damage new 2:',damage_2,'damage old:', damage_old)
+                                        #print('damage new 2:',damage_2,'damage old:', damage_old)
                                         rem=copy.deepcopy(character._equipped_echoes_cost1[1])
                                         character.disable_echo_bonuses()
                                         for l in character._inventory:
@@ -1093,7 +1100,7 @@ class Inventory():
                                         self._calculated_damage=damage_old
                                     if damage_new>damage_old:
                                         if damage_new>self._calculated_damage:
-                                            print('damage new:',damage_new,'damage old:', damage_old)
+                                            #print('damage new:',damage_new,'damage old:', damage_old)
                                             character.disable_echo_bonuses()
                                             character._inventory.remove(j)
                                             character._inventory.append(i)
@@ -1136,7 +1143,7 @@ class Inventory():
                             if damage_1>damage_2:
                                 if damage_1>damage_old:
                                     if damage_1>self._calculated_damage:
-                                        print('damage new 1:',damage_1,'damage old:', damage_old)
+                                        #print('damage new 1:',damage_1,'damage old:', damage_old)
                                         rem=copy.deepcopy(character._equipped_echoes_cost3[0])
                                         character.disable_echo_bonuses()
                                         for l in character._inventory:
@@ -1158,7 +1165,7 @@ class Inventory():
                             else:
                                 if damage_2>damage_old:
                                     if damage_2>self._calculated_damage:
-                                        print('damage new 2:',damage_2,'damage old:', damage_old)
+                                        #print('damage new 2:',damage_2,'damage old:', damage_old)
                                         rem=copy.deepcopy(character._equipped_echoes_cost3[1])
                                         character.disable_echo_bonuses()
                                         for l in character._inventory:
@@ -1210,7 +1217,7 @@ class Inventory():
                                         self._calculated_damage=damage_old
                                     if damage_new>damage_old:
                                         if damage_new>self._calculated_damage:
-                                            print('damage new:',damage_new,'damage old:', damage_old)
+                                            #print('damage new:',damage_new,'damage old:', damage_old)
                                             character.disable_echo_bonuses()
                                             character._inventory.remove(j)
                                             character._inventory.append(i)
@@ -1239,7 +1246,7 @@ class Inventory():
                                 self._calculated_damage=damage_old
                             if damage_1>damage_old:
                                 if damage_1>self._calculated_damage:
-                                    print('damage new:',damage_1,'damage old:', damage_old)
+                                    #print('damage new:',damage_1,'damage old:', damage_old)
                                     rem=copy.deepcopy(character._equipped_echoes_cost4[0])
                                     character.disable_echo_bonuses()
                                     for l in character._inventory:
