@@ -272,8 +272,8 @@ weapons_stats_dict[weapon_emerald_of_genesis]=[587, (24.3, sub_cr), (12.8, sub_e
 
 
 desired_mainstats_list_1cost_dps=(main_atk_p)
-desired_mainstats_list_3cost_havoc_dps=(main_ha_dmg,main_atk_p)
-desired_mainstats_list_4cost_dps=(main_cr,main_cd,main_atk_p)
+desired_mainstats_list_3cost_havoc_dps=(main_ha_dmg)
+desired_mainstats_list_4cost_dps=(main_cd)
 
 desired_mainstats_list_havoc_dps=[desired_mainstats_list_1cost_dps,desired_mainstats_list_3cost_havoc_dps,desired_mainstats_list_4cost_dps]
 
@@ -914,7 +914,7 @@ class Character:
 
 
 class Inventory():
-    def __init__(self,desired_mainstats:list,desired_set:str) -> None:
+    def __init__(self,desired_mainstats:list,desired_set:str,calculated_damage:int) -> None:
         self._desired_mainstats=desired_mainstats
         self._desired_set=desired_set
         self._equipped_echoes=[]
@@ -924,12 +924,12 @@ class Inventory():
         self._num_of_1cost=0
         self._num_of_3cost=0
         self._num_of_4cost=0
+        self._calculated_damage=calculated_damage
         pass
 
 
 
     def pick_best_echoes(self,echo_list:list,character:Character,damage_function)->float:
-        num_of_checked=0
         for i in echo_list:
             if i.read_cost()==1:
                 if i.read_set()==self._desired_set:
@@ -955,23 +955,27 @@ class Inventory():
                                     character_cp.enable_echo_bonuses()
                                     damage_old=0
                                     damage_new=0
-                                    for k in range(100):
+                                    for k in range(500):
                                         damage_old+=damage_function(character)
                                         damage_new+=damage_function(character_cp)
+                                    if damage_old>self._calculated_damage:
+                                        self._calculated_damage=damage_old
                                     if damage_new>damage_old:
-                                        character.disable_echo_bonuses()
-                                        character._inventory.remove(j)
-                                        character._inventory.append(i)
-                                        character.enable_echo_bonuses()
-                                        #self._equipped_echoes_cost1.remove(j)
-                                        character._equipped_echoes_cost1.remove(j)
-                                        #self._equipped_echoes_cost1.append(i)
-                                        character._equipped_echoes_cost1.append(i)
-                                        for l in self._equipped_echoes:
-                                            if l==j:
-                                                self._equipped_echoes.remove(l)
-                                                break
-                                        self._equipped_echoes.append(i)
+                                        if damage_new>self._calculated_damage:
+                                            print('damage new:',damage_new,'damage old:', damage_old)
+                                            character.disable_echo_bonuses()
+                                            character._inventory.remove(j)
+                                            character._inventory.append(i)
+                                            character.enable_echo_bonuses()
+                                            #self._equipped_echoes_cost1.remove(j)
+                                            character._equipped_echoes_cost1.remove(j)
+                                            #self._equipped_echoes_cost1.append(i)
+                                            character._equipped_echoes_cost1.append(i)
+                                            for l in self._equipped_echoes:
+                                                if l==j:
+                                                    self._equipped_echoes.remove(l)
+                                                    break
+                                            self._equipped_echoes.append(i)
                             
                             character_cp_1=character.character_deepcopy()
                             character_cp_2=character.character_deepcopy()
@@ -996,51 +1000,58 @@ class Inventory():
                             damage_1=0
                             damage_2=0
                             damage_old=0
-                            for k in range(100):
+                            for k in range(500):
                                 damage_1+=damage_function(character_cp_1)
                                 damage_2+=damage_function(character_cp_2)
                                 damage_old+=damage_function(character)
+                            if damage_old>self._calculated_damage:
+                                self._calculated_damage=damage_old
+                            
                             if damage_1>damage_2:
                                 if damage_1>damage_old:
-                                    rem=copy.deepcopy(character._equipped_echoes_cost1[0])
-                                    character.disable_echo_bonuses()
-                                    for l in character._inventory:
-                                        if l==rem:
-                                            character._inventory.remove(l)
-                                            break
-                                    character._inventory.append(i)
-                                    character.enable_echo_bonuses()
+                                    if damage_1>self._calculated_damage:
+                                        print('damage new 1:',damage_1,'damage old:', damage_old)
+                                        rem=copy.deepcopy(character._equipped_echoes_cost1[0])
+                                        character.disable_echo_bonuses()
+                                        for l in character._inventory:
+                                            if l==rem:
+                                                character._inventory.remove(l)
+                                                break
+                                        character._inventory.append(i)
+                                        character.enable_echo_bonuses()
 
-                                    for l in character._equipped_echoes_cost1:
-                                        if l==rem:
-                                            character._equipped_echoes_cost1.remove(l)
-                                            break
-                                    character._equipped_echoes_cost1.append(i)
-                                    for l in self._equipped_echoes:
-                                        if l==rem:
-                                            self._equipped_echoes.remove(l)
-                                            break
-                                    self._equipped_echoes.append(i)
+                                        for l in character._equipped_echoes_cost1:
+                                            if l==rem:
+                                                character._equipped_echoes_cost1.remove(l)
+                                                break
+                                        character._equipped_echoes_cost1.append(i)
+                                        for l in self._equipped_echoes:
+                                            if l==rem:
+                                                self._equipped_echoes.remove(l)
+                                                break
+                                        self._equipped_echoes.append(i)
                             else:
                                 if damage_2>damage_old:
-                                    rem=copy.deepcopy(character._equipped_echoes_cost1[1])
-                                    character.disable_echo_bonuses()
-                                    for l in character._inventory:
-                                        if l==rem:
-                                            character._inventory.remove(l)
-                                            break
-                                    character._inventory.append(i)
-                                    character.enable_echo_bonuses()
-                                    for l in character._equipped_echoes_cost1:
-                                        if l==rem:
-                                            character._equipped_echoes_cost1.remove(l)
-                                            break
-                                    character._equipped_echoes_cost1.append(i)
-                                    for l in self._equipped_echoes:
-                                        if l==rem:
-                                            self._equipped_echoes.remove(l)
-                                            break
-                                    self._equipped_echoes.append(i)
+                                    if damage_2>self._calculated_damage:
+                                        print('damage new 2:',damage_2,'damage old:', damage_old)
+                                        rem=copy.deepcopy(character._equipped_echoes_cost1[1])
+                                        character.disable_echo_bonuses()
+                                        for l in character._inventory:
+                                            if l==rem:
+                                                character._inventory.remove(l)
+                                                break
+                                        character._inventory.append(i)
+                                        character.enable_echo_bonuses()
+                                        for l in character._equipped_echoes_cost1:
+                                            if l==rem:
+                                                character._equipped_echoes_cost1.remove(l)
+                                                break
+                                        character._equipped_echoes_cost1.append(i)
+                                        for l in self._equipped_echoes:
+                                            if l==rem:
+                                                self._equipped_echoes.remove(l)
+                                                break
+                                        self._equipped_echoes.append(i)
 
             elif i.read_cost()==3:
                 if i.read_set()==self._desired_set:
@@ -1066,21 +1077,25 @@ class Inventory():
                                     character_cp.enable_echo_bonuses()
                                     damage_old=0
                                     damage_new=0
-                                    for k in range(100):
+                                    for k in range(500):
                                         damage_old+=damage_function(character)
                                         damage_new+=damage_function(character_cp)
+                                    if damage_old>self._calculated_damage:
+                                        self._calculated_damage=damage_old
                                     if damage_new>damage_old:
-                                        character.disable_echo_bonuses()
-                                        character._inventory.remove(j)
-                                        character._inventory.append(i)
-                                        character.enable_echo_bonuses()
-                                        character._equipped_echoes_cost3.remove(j)
-                                        character._equipped_echoes_cost3.append(i)
-                                        for l in self._equipped_echoes:
-                                            if l==j:
-                                                self._equipped_echoes.remove(l)
-                                                break
-                                        self._equipped_echoes.append(i)
+                                        if damage_new>self._calculated_damage:
+                                            print('damage new:',damage_new,'damage old:', damage_old)
+                                            character.disable_echo_bonuses()
+                                            character._inventory.remove(j)
+                                            character._inventory.append(i)
+                                            character.enable_echo_bonuses()
+                                            character._equipped_echoes_cost3.remove(j)
+                                            character._equipped_echoes_cost3.append(i)
+                                            for l in self._equipped_echoes:
+                                                if l==j:
+                                                    self._equipped_echoes.remove(l)
+                                                    break
+                                            self._equipped_echoes.append(i)
                             character_cp_1=character.character_deepcopy()
                             character_cp_2=character.character_deepcopy()
 
@@ -1103,50 +1118,56 @@ class Inventory():
                             damage_1=0
                             damage_2=0
                             damage_old=0
-                            for k in range(100):
+                            for k in range(500):
                                 damage_1+=damage_function(character_cp_1)
                                 damage_2+=damage_function(character_cp_2)
                                 damage_old+=damage_function(character)
+                                if damage_old>self._calculated_damage:
+                                    self._calculated_damage=damage_old
                             if damage_1>damage_2:
                                 if damage_1>damage_old:
-                                    rem=copy.deepcopy(character._equipped_echoes_cost3[0])
-                                    character.disable_echo_bonuses()
-                                    for l in character._inventory:
-                                        if l==rem:
-                                            character._inventory.remove(l)
-                                            break
-                                    character._inventory.append(i)
-                                    character.enable_echo_bonuses()
-                                    for l in character._equipped_echoes_cost3:
-                                        if l==rem:
-                                            character._equipped_echoes_cost3.remove(l)
-                                            break
-                                    character._equipped_echoes_cost3.append(i)
-                                    for l in self._equipped_echoes:
-                                        if l==rem:
-                                            self._equipped_echoes.remove(l)
-                                            break
-                                    self._equipped_echoes.append(i)
+                                    if damage_1>self._calculated_damage:
+                                        print('damage new 1:',damage_1,'damage old:', damage_old)
+                                        rem=copy.deepcopy(character._equipped_echoes_cost3[0])
+                                        character.disable_echo_bonuses()
+                                        for l in character._inventory:
+                                            if l==rem:
+                                                character._inventory.remove(l)
+                                                break
+                                        character._inventory.append(i)
+                                        character.enable_echo_bonuses()
+                                        for l in character._equipped_echoes_cost3:
+                                            if l==rem:
+                                                character._equipped_echoes_cost3.remove(l)
+                                                break
+                                        character._equipped_echoes_cost3.append(i)
+                                        for l in self._equipped_echoes:
+                                            if l==rem:
+                                                self._equipped_echoes.remove(l)
+                                                break
+                                        self._equipped_echoes.append(i)
                             else:
                                 if damage_2>damage_old:
-                                    rem=copy.deepcopy(character._equipped_echoes_cost3[1])
-                                    character.disable_echo_bonuses()
-                                    for l in character._inventory:
-                                        if l==rem:
-                                            character._inventory.remove(l)
-                                            break
-                                    character._inventory.append(i)
-                                    character.enable_echo_bonuses()
-                                    for l in character._equipped_echoes_cost3:
-                                        if l==rem:
-                                            character._equipped_echoes_cost3.remove(l)
-                                            break
-                                    character._equipped_echoes_cost3.append(i)
-                                    for l in self._equipped_echoes:
-                                        if l==rem:
-                                            self._equipped_echoes.remove(l)
-                                            break
-                                    self._equipped_echoes.append(i)
+                                    if damage_2>self._calculated_damage:
+                                        print('damage new 2:',damage_2,'damage old:', damage_old)
+                                        rem=copy.deepcopy(character._equipped_echoes_cost3[1])
+                                        character.disable_echo_bonuses()
+                                        for l in character._inventory:
+                                            if l==rem:
+                                                character._inventory.remove(l)
+                                                break
+                                        character._inventory.append(i)
+                                        character.enable_echo_bonuses()
+                                        for l in character._equipped_echoes_cost3:
+                                            if l==rem:
+                                                character._equipped_echoes_cost3.remove(l)
+                                                break
+                                        character._equipped_echoes_cost3.append(i)
+                                        for l in self._equipped_echoes:
+                                            if l==rem:
+                                                self._equipped_echoes.remove(l)
+                                                break
+                                        self._equipped_echoes.append(i)
 
 
             elif i.read_cost()==4:
@@ -1173,21 +1194,25 @@ class Inventory():
                                     character_cp.enable_echo_bonuses()
                                     damage_old=0
                                     damage_new=0
-                                    for k in range(100):
+                                    for k in range(500):
                                         damage_old+=damage_function(character)
                                         damage_new+=damage_function(character_cp)
+                                    if damage_old>self._calculated_damage:
+                                        self._calculated_damage=damage_old
                                     if damage_new>damage_old:
-                                        character.disable_echo_bonuses()
-                                        character._inventory.remove(j)
-                                        character._inventory.append(i)
-                                        character.enable_echo_bonuses()
-                                        character._equipped_echoes_cost4.remove(j)
-                                        character._equipped_echoes_cost4.append(i)
-                                        for l in self._equipped_echoes:
-                                            if l==j:
-                                                self._equipped_echoes.remove(l)
-                                                break
-                                        self._equipped_echoes.append(i)
+                                        if damage_new>self._calculated_damage:
+                                            print('damage new:',damage_new,'damage old:', damage_old)
+                                            character.disable_echo_bonuses()
+                                            character._inventory.remove(j)
+                                            character._inventory.append(i)
+                                            character.enable_echo_bonuses()
+                                            character._equipped_echoes_cost4.remove(j)
+                                            character._equipped_echoes_cost4.append(i)
+                                            for l in self._equipped_echoes:
+                                                if l==j:
+                                                    self._equipped_echoes.remove(l)
+                                                    break
+                                            self._equipped_echoes.append(i)
                             character_cp_1=character.character_deepcopy()
                             character_cp_1.disable_echo_bonuses()
                             for j in character_cp_1._inventory:
@@ -1196,32 +1221,34 @@ class Inventory():
                                     break
                             character_cp_1._inventory.append(i)
                             character_cp_1.enable_echo_bonuses()
-
-
                             damage_1=0
                             damage_old=0
-                            for k in range(100):
+                            for k in range(500):
                                 damage_1+=damage_function(character_cp_1)
                                 damage_old+=damage_function(character)
+                            if damage_old>self._calculated_damage:
+                                self._calculated_damage=damage_old
                             if damage_1>damage_old:
-                                rem=copy.deepcopy(character._equipped_echoes_cost4[0])
-                                character.disable_echo_bonuses()
-                                for l in character._inventory:
-                                        if l==rem:
-                                            character._inventory.remove(l)
-                                            break
-                                character._inventory.append(i)
-                                character.enable_echo_bonuses()
-                                for l in character._equipped_echoes_cost4:
-                                        if l==rem:
-                                            character._equipped_echoes_cost4.remove(l)
-                                            break
-                                character._equipped_echoes_cost4.append(i)
-                                for l in self._equipped_echoes:
-                                        if l==rem:
-                                            self._equipped_echoes.remove(l)
-                                            break
-                                self._equipped_echoes.append(i)
+                                if damage_1>self._calculated_damage:
+                                    print('damage new:',damage_1,'damage old:', damage_old)
+                                    rem=copy.deepcopy(character._equipped_echoes_cost4[0])
+                                    character.disable_echo_bonuses()
+                                    for l in character._inventory:
+                                            if l==rem:
+                                                character._inventory.remove(l)
+                                                break
+                                    character._inventory.append(i)
+                                    character.enable_echo_bonuses()
+                                    for l in character._equipped_echoes_cost4:
+                                            if l==rem:
+                                                character._equipped_echoes_cost4.remove(l)
+                                                break
+                                    character._equipped_echoes_cost4.append(i)
+                                    for l in self._equipped_echoes:
+                                            if l==rem:
+                                                self._equipped_echoes.remove(l)
+                                                break
+                                    self._equipped_echoes.append(i)
                 
 #            num_of_checked+=1
 #            if len(character._inventory)>(len(self._equipped_echoes_cost1)+len(self._equipped_echoes_cost3)+len(self._equipped_echoes_cost4)):
@@ -1249,10 +1276,10 @@ class Inventory():
         character._ult_dmg=max(character._ult_dmg,0)
         character._heavy_dmg=max(character._heavy_dmg,0)
         character.check_set()
-        for l in range(1500):
+        for l in range(100000):
             damage_final+=damage_function(character)
         
-        return damage_final/1500
+        return (damage_final/100000,self._calculated_damage)
 
 
 

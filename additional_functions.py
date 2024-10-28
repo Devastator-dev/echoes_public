@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 
+class DamageIsLowerError(Exception):
+    def __init__(self, *args):
+        super().__init__(*args)
 
 
 def simulate_rover_echo_farming(weeks:int,n=4,save_plots=False,print_character=False):
@@ -11,6 +14,8 @@ def simulate_rover_echo_farming(weeks:int,n=4,save_plots=False,print_character=F
     damages_through_days=[]
     average_damages_through_days=np.zeros(weeks)
     damage_at_day=0
+    previous_rolled_damage=0
+    dmg=0
     all_damages=np.zeros((n,np.size(list_of_days)))
     for k in range(n):
         Rover_Havoc=ech.Character(ech.set_sse,10825,413,1259,125,5,150,ech.weapon_emerald_of_genesis,'Havoc Rover',ech.main_ha_dmg,0,12,12)
@@ -18,8 +23,14 @@ def simulate_rover_echo_farming(weeks:int,n=4,save_plots=False,print_character=F
         echo_lst=[]
         for i in list_of_days:
             echo_lst=echo_lst+ech.simulate_rolling_echoes_n_days(int(i),False,[ech.set_sse,ech.set_mc],ech.set_sse)
-            inv=ech.Inventory(ech.desired_mainstats_list_havoc_dps,ech.set_sse)
-            damage_at_day+=inv.pick_best_echoes(echo_lst,Rover_Havoc,ech.calculate_rover_combo_damage)
+            inv=ech.Inventory(ech.desired_mainstats_list_havoc_dps,ech.set_sse,previous_rolled_damage)
+            dmg,previous_rolled_damage=inv.pick_best_echoes(echo_lst,Rover_Havoc,ech.calculate_rover_combo_damage)
+            damage_at_day+=dmg
+            #try:
+            #    if damage_at_day<damages_through_days[-1]:
+            #        raise DamageIsLowerError
+            #except(IndexError):
+            #    pass
             damages_through_days.append(damage_at_day)
             damage_at_day=0
             discarded+=echo_lst
@@ -32,6 +43,7 @@ def simulate_rover_echo_farming(weeks:int,n=4,save_plots=False,print_character=F
             Rover_Havoc.print_character_stats()
             for i in Rover_Havoc._inventory:
                 i.print_stats()
+        previous_rolled_damage=0
     average_damages_through_days=average_damages_through_days/n
     percentages_of_max=[i/max(average_damages_through_days) for i in average_damages_through_days]
 
@@ -58,7 +70,7 @@ def simulate_rover_echo_farming(weeks:int,n=4,save_plots=False,print_character=F
     titstr3='All damages'
     fig,ax=plt.subplots()
     for i in range(int(np.size(all_damages,0))):
-        ax.plot(np.cumsum(list_of_days),all_damages[i])
+        ax.plot(np.cumsum(list_of_days),all_damages[i],'.')
     ax.set(title=titstr3,xlabel='day',ylabel='damage')
     if save_plots:
         titstr3+='.png'
