@@ -1,4 +1,6 @@
 import echoes_main as ech
+import damage_functions as dmgfun
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -8,7 +10,7 @@ class DamageIsLowerError(Exception):
         super().__init__(*args)
 
 
-def simulate_rover_echo_farming(weeks:int,n=4,save_plots=False,print_character=False):
+def simulate_rover_echo_farming(weeks:int,n:int,save_plots=False,print_character=False):
     discarded=[]
     list_of_days=np.ones(weeks)*7
     damages_through_days=[]
@@ -24,13 +26,16 @@ def simulate_rover_echo_farming(weeks:int,n=4,save_plots=False,print_character=F
         for i in list_of_days:
             echo_lst=echo_lst+ech.simulate_rolling_echoes_n_days(int(i),False,[ech.set_sse,ech.set_mc],ech.set_sse)
             inv=ech.Inventory(ech.desired_mainstats_list_havoc_dps,ech.set_sse,previous_rolled_damage)
-            dmg,previous_rolled_damage=inv.pick_best_echoes(echo_lst,Rover_Havoc,ech.calculate_rover_combo_damage)
+            dmg,previous_rolled_damage=inv.pick_best_echoes(echo_lst,Rover_Havoc,dmgfun.calculate_hrover_combo_damage)
             damage_at_day+=dmg
-            #try:
-            #    if damage_at_day<damages_through_days[-1]:
-            #        raise DamageIsLowerError
-            #except(IndexError):
-            #    pass
+            try:
+                if damage_at_day<damages_through_days[-1]:
+                    if np.isclose(damage_at_day,damages_through_days[-1],500):
+                        damage_at_day=damages_through_days[-1]
+                    else:
+                        raise DamageIsLowerError
+            except(IndexError):
+                pass
             damages_through_days.append(damage_at_day)
             damage_at_day=0
             discarded+=echo_lst
@@ -49,30 +54,30 @@ def simulate_rover_echo_farming(weeks:int,n=4,save_plots=False,print_character=F
 
     fig,ax=plt.subplots()
     ax.plot(np.cumsum(list_of_days),average_damages_through_days,'.')
-    titstr='Simulation of damage during echo farming for '+str(np.sum(list_of_days))+' days'
+    titstr='Simulation of damage during echo farming for '+str(np.sum(list_of_days))+' days, '+str(n)+'iterations'
     ax.set(title=titstr ,xlabel='day',ylabel='average damage at specific day')
     ax.grid()
     if save_plots:
         titstr+='.png'
-        plt.savefig(titstr,format='png')
+        plt.savefig('Output/Graphs/'+titstr,format='png')
 
 
-    titstr2='Percentage of max dmg during '+str(np.sum(list_of_days))+' days'
+    titstr2='Percentage of max dmg during '+str(np.sum(list_of_days))+' days, '+str(n)+'iterations'
     fig,ax=plt.subplots()
     ax.plot(np.cumsum(list_of_days),percentages_of_max,'-.',marker='.')
     ax.set(title=titstr2,xlabel='day',ylabel='percentage of max')
     ax.grid()
     if save_plots:
         titstr2+='.png'
-        plt.savefig(titstr2,format='png')
+        plt.savefig('Output/Graphs/'+titstr2,format='png')
     
 
-    titstr3='All damages'
+    titstr3='All damages during '+str(np.sum(list_of_days))+' days, '+str(n)+'iterations'
     fig,ax=plt.subplots()
     for i in range(int(np.size(all_damages,0))):
         ax.plot(np.cumsum(list_of_days),all_damages[i],'.')
     ax.set(title=titstr3,xlabel='day',ylabel='damage')
     if save_plots:
         titstr3+='.png'
-        plt.savefig(titstr3,format='png')
+        plt.savefig('Output/Graphs/'+titstr3,format='png')
     return average_damages_through_days,percentages_of_max,list_of_days

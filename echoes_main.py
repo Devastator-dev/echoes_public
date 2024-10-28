@@ -272,8 +272,8 @@ weapons_stats_dict[weapon_emerald_of_genesis]=[587, (24.3, sub_cr), (12.8, sub_e
 
 
 desired_mainstats_list_1cost_dps=(main_atk_p)
-desired_mainstats_list_3cost_havoc_dps=(main_ha_dmg)
-desired_mainstats_list_4cost_dps=(main_cd)
+desired_mainstats_list_3cost_havoc_dps=(main_ha_dmg,main_atk_p)
+desired_mainstats_list_4cost_dps=(main_cd,main_cr,main_atk_p)
 
 desired_mainstats_list_havoc_dps=[desired_mainstats_list_1cost_dps,desired_mainstats_list_3cost_havoc_dps,desired_mainstats_list_4cost_dps]
 
@@ -1284,85 +1284,6 @@ class Inventory():
 
 
 
-def calculate_rover_combo_damage(character:Character)->float:
-    """
-    This calculates folowing combo of havoc rover without buffs from other characters.
-    -----------
-
-    Intro 1x 1 \n
-    Skill 2x 3 \n
-    Heavy Attack: Devastation 1x 4 \n
-    Umbra: Basic P1 1x 5 \n
-    Umbra: Basic P2 1x 6 \n 
-    Umbra: Basic P3 1x 7 \n
-    Umbra: Basic P4 4x 11 \n
-    Umbra: Basic P5 5x 16 \n
-    Umbra: Basic P1 1x 17 \n
-    Umbra: Basic P2 1x 18 \n
-    Umbra: Basic P3 1x 19 \n 
-    Umbra: Basic P4 4x 23 \n 
-    Umbra: Basic P5 5x 28 \n 
-    Skill: Umbra: Lifetaker 6x 34 \n
-    Ultimate 1x 35 \n
-    Outro 3x 38 \n
-    """
-    total_damage=0
-    crit=[]
-    for i in range(38):
-        w=np.random.random()
-        if w<(character._total_cr/100):
-            crit.append(1)
-        else:
-            crit.append(0)
-    
-    total_damage+=1.9881*character._total_attack*(1+(character._total_elem_dmg/100))*(1+(((character._total_cd/100)-1)*crit[0]))
-
-    total_damage+=2.8629*character._total_attack*(1+((character._total_elem_dmg+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[1]))
-    total_damage+=2.8629*character._total_attack*(1+((character._total_elem_dmg+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[2]))
-
-    total_damage+=2.2814*character._total_attack*(1+((character._total_elem_dmg+character._heavy_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[3]))
-
-    total_damage+=0.5637*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[4]))
-    total_damage+=0.9394*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[5]))
-    total_damage+=1.5567*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[6]))
-    total_damage+=0.3713*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[7]))
-    total_damage+=0.3713*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[8]))
-    total_damage+=0.3713*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[9]))
-    total_damage+=1.1139*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[10]))
-    total_damage+=0.2852*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[11]))
-    total_damage+=0.2852*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[12]))
-    total_damage+=0.2852*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[13]))
-    total_damage+=0.2852*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[14]))
-    total_damage+=1.1407*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[15]))
-
-    total_damage+=0.5637*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[16]))
-    total_damage+=0.9394*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[17]))
-    total_damage+=1.5567*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[18]))
-    total_damage+=0.3713*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[19]))
-    total_damage+=0.3713*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[20]))
-    total_damage+=0.3713*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[21]))
-    total_damage+=1.1139*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[22]))
-    total_damage+=0.2852*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[23]))
-    total_damage+=0.2852*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[24]))
-    total_damage+=0.2852*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[25]))
-    total_damage+=0.2852*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[26]))
-    total_damage+=1.1407*character._total_attack*(1+((character._total_elem_dmg+20+character._basic_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[27]))
-
-    total_damage+=2.7635*character._total_attack*(1+((character._total_elem_dmg+20+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[28]))
-    total_damage+=2.7635*character._total_attack*(1+((character._total_elem_dmg+20+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[29]))
-    total_damage+=0.0995*character._total_attack*(1+((character._total_elem_dmg+20+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[30]))
-    total_damage+=0.0995*character._total_attack*(1+((character._total_elem_dmg+20+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[31]))
-    total_damage+=0.0995*character._total_attack*(1+((character._total_elem_dmg+20+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[32]))
-    total_damage+=0.0995*character._total_attack*(1+((character._total_elem_dmg+20+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[33]))
-
-    total_damage+=15.2090*character._total_attack*(1+((character._total_elem_dmg+20+character._ult_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[34]))
-
-    total_damage+=1.433*character._total_attack*(1+((character._total_elem_dmg+character._outro_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[35]))
-    total_damage+=1.433*character._total_attack*(1+((character._total_elem_dmg+character._outro_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[36]))
-    total_damage+=1.433*character._total_attack*(1+((character._total_elem_dmg+character._outro_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[37]))
-    pass
-    return total_damage
-
 
 
 def roll_tacet_field(set_:list):
@@ -1404,28 +1325,3 @@ def simulate_rolling_echoes_n_days(n:int,overworld_farming:bool,sets_to_farm:lis
         echo_list.append(Echo(set_of_4cost,np.random.choice(names_of_4cost,None,False,[1/2,1/2])))
     return echo_list
 
-
-
-
-def main():
-    #print(full_sets_as_sets[set_vt])
-
-    #Rover_Havoc=Character(set_sse,10825,413,1259,125,5,150,weapon_emerald_of_genesis,'Havoc Rover',0,12,12)
-    #Rover_Havoc._apply_weapon_conditional_bonuses()
-    #Rover_Havoc.print_character_stats()
-    #damage=calculate_rover_combo_damage(Rover_Havoc)
-    #print('Total damage without echoes: ',damage)
-    #echotest=Echo(set_sse,H15)
-    #echotest1=Echo(set_lt,H02)
-    #echotest2=copy.deepcopy(echotest1)
-    #Rover_Havoc._inventory=[echotest]
-    #Rover_Havoc._inventory.append(echotest1)
-    #print(Rover_Havoc._inventory)
-    #Rover_Havoc.enable_echo_bonuses()
-
-    #print(echotest1==echotest2)
-    #echotest1.print_stats()
-    #echotest2.print_stats()
-    return 0
-
-main()
