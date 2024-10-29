@@ -946,10 +946,12 @@ class Inventory():
 
 
     def pick_best_echoes(self,echo_list:list,character:Character,damage_function)->float:
+        leveled_count=0
         for i in echo_list:
             if i.read_cost()==1:
                 if i.read_set()==self._desired_set:
                     if i.read_mainstats()[1] in self._desired_mainstats[0]:
+                        leveled_count+=1
                         if self._num_of_1cost<2 and character._num_of_1cost<2:
                             #self._equipped_echoes_cost1.append(i)
                             character._equipped_echoes_cost1.append(i)
@@ -1072,6 +1074,7 @@ class Inventory():
             elif i.read_cost()==3:
                 if i.read_set()==self._desired_set:
                     if i.read_mainstats()[1] in self._desired_mainstats[1]:
+                        leveled_count+=1
                         if self._num_of_3cost<2 and character._num_of_3cost<2:
                             character._equipped_echoes_cost3.append(i)
                             self._equipped_echoes.append(i)
@@ -1189,6 +1192,7 @@ class Inventory():
             elif i.read_cost()==4:
                 if i.read_set()==self._desired_set:
                     if i.read_mainstats()[1] in self._desired_mainstats[2]:
+                        leveled_count+=1
                         if self._num_of_4cost==0 and character._num_of_4cost==0:
                             character._equipped_echoes_cost4.append(i)
                             self._equipped_echoes.append(i)
@@ -1292,10 +1296,12 @@ class Inventory():
         character._ult_dmg=max(character._ult_dmg,0)
         character._heavy_dmg=max(character._heavy_dmg,0)
         character.check_set()
+        exp_mats_used=(leveled_count*79100)/5000
+        tuners_used=leveled_count*40
         for l in range(100000):
             damage_final+=damage_function(character)
         
-        return (damage_final/100000,self._calculated_damage)
+        return (damage_final/100000,self._calculated_damage,exp_mats_used,tuners_used)
 
 
 
@@ -1306,10 +1312,17 @@ def roll_tacet_field(set_:list):
     rand=np.random.random()
     if rand<0.5:
         num_of_echoes=4
+        num_of_gexp=4.6
+        num_of_tuners=20
     else:
+        if rand<0.6:
+            num_of_echoes=6
+            num_of_gexp=6
         num_of_echoes=5
-    num_of_3cost=[4,3,2,1]
-    num_of_3cost_weight=[1/4,1/4,1/4,1/4]
+        num_of_gexp=3.2
+        num_of_tuners=30
+    num_of_3cost=[5,4,3,2,1]
+    num_of_3cost_weight=[1/5,1/5,1/5,1/5,1/5]
     rolled_3cost=np.random.choice(num_of_3cost,None,False,num_of_3cost_weight)
     rolled_1cost=num_of_echoes-rolled_3cost
     sets=np.random.choice(set_,num_of_echoes,True,[1/2,1/2])
@@ -1326,7 +1339,8 @@ def roll_tacet_field(set_:list):
     result=[]
     for i in range(num_of_echoes):
         result.append(Echo(sets[i],echo_code_list[i]))
-    return result
+    res_tup=(result,num_of_gexp,num_of_tuners)
+    return res_tup
 
 
 
@@ -1335,9 +1349,11 @@ def simulate_rolling_echoes_n_days(n:int,overworld_farming:bool,sets_to_farm:lis
     if overworld_farming:  #TODO implement overworld farming
         pass
     for i in range(int(n*4)):
-        echo_list.extend(roll_tacet_field(sets_to_farm))
+        rolled_lst=roll_tacet_field(sets_to_farm)
+        echo_list.extend(rolled_lst[0])
     names_of_4cost=list(echo_cost_dict_sets[echo_4_cost].intersection(full_sets_as_sets[set_of_4cost]))
     for i in range(int((n/7)*15)):
         echo_list.append(Echo(set_of_4cost,np.random.choice(names_of_4cost,None,False,[1/2,1/2])))
-    return echo_list
+    res_tup=(echo_list,rolled_lst[1],rolled_lst[2])
+    return res_tup
 

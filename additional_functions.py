@@ -23,11 +23,18 @@ def simulate_rover_echo_farming(weeks:int,n:int,save_plots=False,print_character
         Rover_Havoc=ech.Character(ech.set_sse,10825,413,1259,125,5,150,ech.weapon_emerald_of_genesis,'Havoc Rover',ech.main_ha_dmg,0,12,12)
         Rover_Havoc._apply_weapon_conditional_bonuses()
         echo_lst=[]
+        total_exp=0
+        total_tuners=0
         for i in list_of_days:
-            echo_lst=echo_lst+ech.simulate_rolling_echoes_n_days(int(i),False,[ech.set_sse,ech.set_mc],ech.set_sse)
+            rolled_echoes_and_exp=ech.simulate_rolling_echoes_n_days(int(i),False,[ech.set_sse,ech.set_mc],ech.set_sse)
+            echo_lst=echo_lst+rolled_echoes_and_exp[0]
+            total_exp+=rolled_echoes_and_exp[1]
+            total_tuners+=rolled_echoes_and_exp[2]
             inv=ech.Inventory(ech.desired_mainstats_list_havoc_dps,ech.set_sse,previous_rolled_damage)
-            dmg,previous_rolled_damage=inv.pick_best_echoes(echo_lst,Rover_Havoc,dmgfun.calculate_hrover_combo_damage)
+            dmg,previous_rolled_damage,echo_mats_used,tuners_used=inv.pick_best_echoes(echo_lst,Rover_Havoc,dmgfun.calculate_hrover_combo_damage)
             damage_at_day+=dmg
+            total_exp-=echo_mats_used
+            total_tuners-=tuners_used
             try:
                 if damage_at_day<damages_through_days[-1]:
                     if np.isclose(damage_at_day,damages_through_days[-1],500):
@@ -49,6 +56,16 @@ def simulate_rover_echo_farming(weeks:int,n:int,save_plots=False,print_character
             for i in Rover_Havoc._inventory:
                 i.print_stats()
         previous_rolled_damage=0
+        if total_exp<0:
+            print('Echo exp materials needed (golden): ',-total_exp)
+            print('Estimated tacet field runs needed for exp: ', -total_exp/4.18)
+        else:
+            print('Echo materials obtained (golden): ',total_exp)
+        if total_tuners<0:
+            print('Tuners needed: ', -total_tuners)
+            print('Estimated tacet field runs needed for tuners: ', -total_tuners/25)
+        else:
+            print('Tuners obtained: ',total_tuners)
     average_damages_through_days=average_damages_through_days/n
     percentages_of_max=[i/max(average_damages_through_days) for i in average_damages_through_days]
 
@@ -99,11 +116,18 @@ def simulate_xiangli_echo_farming(weeks:int,n:int,save_plots=False,print_charact
         Xiangli_Yao=ech.Character(ech.set_vt,10625,425,1222,125,5,166,ech.weapon_abyss_surges,'Xiangli Yao',ech.main_el_dmg,0,0,12)
         Xiangli_Yao._apply_weapon_conditional_bonuses()
         echo_lst=[]
+        total_exp=0
+        total_tuners=0
         for i in list_of_days:
-            echo_lst=echo_lst+ech.simulate_rolling_echoes_n_days(int(i),False,[ech.set_ff,ech.set_vt],ech.set_vt)
+            rolled_echoes_and_exp=ech.simulate_rolling_echoes_n_days(int(i),False,[ech.set_ff,ech.set_vt],ech.set_vt)
+            echo_lst=echo_lst+rolled_echoes_and_exp[0]
+            total_exp+=rolled_echoes_and_exp[1]
+            total_tuners+=rolled_echoes_and_exp[2]
             inv=ech.Inventory(ech.desired_mainstats_list_electro_dps,ech.set_vt,previous_rolled_damage)
-            dmg,previous_rolled_damage=inv.pick_best_echoes(echo_lst,Xiangli_Yao,dmgfun.calculate_xiangli_yao_combo_damage)
+            dmg,previous_rolled_damage,echo_mats_used,tuners_used=inv.pick_best_echoes(echo_lst,Xiangli_Yao,dmgfun.calculate_xiangli_yao_combo_damage)
             damage_at_day+=dmg
+            total_exp-=echo_mats_used
+            total_tuners-=tuners_used
             try:
                 if damage_at_day<damages_through_days[-1]:
                     if np.isclose(damage_at_day,damages_through_days[-1],500):
@@ -125,6 +149,16 @@ def simulate_xiangli_echo_farming(weeks:int,n:int,save_plots=False,print_charact
             for i in Xiangli_Yao._inventory:
                 i.print_stats()
         previous_rolled_damage=0
+        if total_exp<0:
+            print('Echo exp materials needed (golden): ',-total_exp)
+            print('Estimated tacet field runs needed for exp: ', -total_exp/4.18)
+        else:
+            print('Echo materials obtained (golden): ',total_exp)
+        if total_tuners<0:
+            print('Tuners needed: ', -total_tuners)
+            print('Estimated tacet field runs needed for tuners: ', -total_tuners/25)
+        else:
+            print('Tuners obtained: ',total_tuners)
     average_damages_through_days=average_damages_through_days/n
     percentages_of_max=[i/max(average_damages_through_days) for i in average_damages_through_days]
 
@@ -174,11 +208,18 @@ def simulate_jinshi_echo_farming(weeks:int,n:int,save_plots=False,print_characte
         Jinshi=ech.Character(ech.set_cl,10825,413,1259,125,13,150,ech.weapon_ages_of_harvest,'Jinshi',ech.main_sp_dmg,0,32,12)
         Jinshi._apply_weapon_conditional_bonuses()
         echo_lst=[]
+        total_exp=0
+        total_tuners=0
         for i in list_of_days:
-            echo_lst=echo_lst+ech.simulate_rolling_echoes_n_days(int(i),False,[ech.set_cl,ech.set_lt],ech.set_cl)
+            rolled_echoes_and_exp=ech.simulate_rolling_echoes_n_days(int(i),False,[ech.set_cl,ech.set_lt],ech.set_cl)
+            echo_lst=echo_lst+rolled_echoes_and_exp[0]
+            total_exp+=rolled_echoes_and_exp[1]
+            total_tuners+=rolled_echoes_and_exp[2]
             inv=ech.Inventory(ech.desired_mainstats_list_spectro_dps,ech.set_cl,previous_rolled_damage)
-            dmg,previous_rolled_damage=inv.pick_best_echoes(echo_lst,Jinshi,dmgfun.calculate_jinshi_combo_damage)
+            dmg,previous_rolled_damage,echo_mats_used,tuners_used=inv.pick_best_echoes(echo_lst,Jinshi,dmgfun.calculate_jinshi_combo_damage)
             damage_at_day+=dmg
+            total_exp-=echo_mats_used
+            total_tuners-=tuners_used
             try:
                 if damage_at_day<damages_through_days[-1]:
                     if np.isclose(damage_at_day,damages_through_days[-1],500):
@@ -200,6 +241,16 @@ def simulate_jinshi_echo_farming(weeks:int,n:int,save_plots=False,print_characte
             for i in Jinshi._inventory:
                 i.print_stats()
         previous_rolled_damage=0
+        if total_exp<0:
+            print('Echo exp materials needed (golden): ',-total_exp)
+            print('Estimated tacet field runs needed for exp: ', -total_exp/4.18)
+        else:
+            print('Echo materials obtained (golden): ',total_exp)
+        if total_tuners<0:
+            print('Tuners needed: ', -total_tuners)
+            print('Estimated tacet field runs needed for tuners: ', -total_tuners/25)
+        else:
+            print('Tuners obtained: ',total_tuners)
     average_damages_through_days=average_damages_through_days/n
     percentages_of_max=[i/max(average_damages_through_days) for i in average_damages_through_days]
 
