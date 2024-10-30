@@ -296,3 +296,22 @@ def calculate_jinshi_combo_damage(character:ech.Character)->float:
     total_damage+=(3.4792+(25*0.4454))*character._total_attack*(1+((character._total_elem_dmg+character._skill_dmg)/100))*(1+(((character._total_cd/100)-1)*crit[69]))
 
     return total_damage
+
+
+
+
+def calculate_shorekeeper_build_quality(character:ech.Character)->float:
+    quality_parameter=0
+    if character._total_er==230:
+        quality_parameter+=1000000
+    elif (character._total_er<230) and (character._total_er>200):
+        quality_parameter+=700000
+    elif (character._total_er<200) and (character._total_er>170):
+        quality_parameter+=400000
+    elif character._total_er<170:
+        quality_parameter+=100000
+    elif character._total_er>230:
+        quality_parameter+=900000
+    
+
+    pass
