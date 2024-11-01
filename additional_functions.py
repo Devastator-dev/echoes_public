@@ -10,7 +10,7 @@ class DamageIsLowerError(Exception):
         super().__init__(*args)
 
 
-def simulate_rover_echo_farming(weeks:int,n:int,save_plots=False,print_character=False):
+def simulate_hrover_echo_farming(weeks:int,n:int,save_plots=False,print_character=False):
     discarded=[]
     list_of_days=np.ones(weeks)*7
     damages_through_days=[]
@@ -127,7 +127,7 @@ def simulate_xiangli_echo_farming(weeks:int,n:int,save_plots=False,print_charact
             total_exp+=rolled_echoes_and_exp[1]
             total_tuners+=rolled_echoes_and_exp[2]
             inv=ech.Inventory(ech.desired_mainstats_list_electro_dps,ech.set_vt,previous_rolled_damage)
-            dmg,previous_rolled_damage,echo_mats_used,tuners_used=inv.pick_best_echoes(echo_lst,Xiangli_Yao,dmgfun.calculate_xiangli_yao_combo_damage)
+            dmg,previous_rolled_damage,echo_mats_used,tuners_used=inv.pick_best_echoes(echo_lst,Xiangli_Yao,dmgfun.calculate_xiangli_combo_damage)
             damage_at_day+=dmg
             total_exp-=echo_mats_used
             total_tuners-=tuners_used

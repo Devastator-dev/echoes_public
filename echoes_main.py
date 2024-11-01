@@ -1298,10 +1298,10 @@ class Inventory():
         character.check_set()
         exp_mats_used=(leveled_count*79100)/5000
         tuners_used=leveled_count*40
-        for l in range(100000):
+        for l in range(10000):
             damage_final+=damage_function(character)
         
-        return (damage_final/100000,self._calculated_damage,exp_mats_used,tuners_used)
+        return (damage_final/10000,self._calculated_damage,exp_mats_used,tuners_used)
 
 
 
