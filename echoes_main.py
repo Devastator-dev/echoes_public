@@ -356,7 +356,13 @@ sets_bonuses={
 }
 
 
-
+field_set_lt_rg=[set_rg,set_lt]
+field_set_sg_ff=[set_sg,set_ff]
+field_set_vt_mr=[set_vt,set_mr]
+field_set_ff_vt=[set_vt,set_ff]
+field_set_mr_rg=[set_mr,set_rg]
+field_set_sse_mc=[set_sse,set_mc]
+field_set_cl_lt=[set_cl,set_lt]
 
 
 
