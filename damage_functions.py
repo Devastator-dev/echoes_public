@@ -358,6 +358,7 @@ def calculate_jinshi_combo_damage(character: ech.Character) -> float:
 
 
 
+
 def calculate_shorekeeper_build_quality(character:ech.Character)->float:
     '''
     Calculates build quality for Shorekeeper based on her optimal combo:
