@@ -12,9 +12,9 @@ class DamageIsLowerError(Exception):
 
 
 
-def simulate_dps_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_sets:list,desired_set:str,desired_mainstats_list:list,character_dmgfun,save_plots=False,print_character=False):
+def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_sets:list,desired_set:str,desired_mainstats_list:list,character_dmgfun,is_support:bool,save_plots=False,print_character=False):
     """
-    Simulates echo rolling and damage for character passed as parameter
+    Simulates echo rolling and damage or build quality for character passed as parameter
 
     Parameters
     ----------
@@ -40,7 +40,10 @@ def simulate_dps_echo_farming(weeks:int,n:int,character:ech.Character,tacet_fiel
         name of character used for saving plots
 
     character_dmgfun : function
-        function that calculates damage for specific character
+        Function that calculates damage for specific character
+
+    is_support : bool
+        True if you want to calculate build quality
     
     save_plots : bool, default:False
         True if you want to save graphs
@@ -128,8 +131,13 @@ def simulate_dps_echo_farming(weeks:int,n:int,character:ech.Character,tacet_fiel
 
     fig,ax=plt.subplots()
     ax.plot(np.cumsum(list_of_days),average_damages_through_days,'.')
-    titstr='Simulation of damage during echo farming for '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
-    ax.set(title=titstr ,xlabel='day',ylabel='average damage at specific day')
+    if is_support:
+        titstr='Simulation of build quality during echo farming for '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
+        ylabel='average build quality at specific day'
+    else:
+        titstr='Simulation of damage during echo farming for '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
+        ylabel='average damage at specific day'
+    ax.set(title=titstr ,xlabel='day',ylabel=ylabel)
     ax.grid()
     if save_plots:
         script_dir = os.path.dirname(__file__)
@@ -138,12 +146,15 @@ def simulate_dps_echo_farming(weeks:int,n:int,character:ech.Character,tacet_fiel
             os.makedirs(results_dir)
         titstr+='.png'
         plt.savefig('Output/Graphs/'+character._name+'/'+titstr,format='png')
-
-
-    titstr2='Percentage of max dmg during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
+    if is_support:
+        ylabel='percentage of max build quality'
+        titstr2='Percentage of max build quality during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
+    else:
+        ylabel='percentage of max dmg'
+        titstr2='Percentage of max dmg during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
     fig,ax=plt.subplots()
     ax.plot(np.cumsum(list_of_days),percentages_of_max,'-.',marker='.')
-    ax.set(title=titstr2,xlabel='day',ylabel='percentage of max')
+    ax.set(title=titstr2,xlabel='day',ylabel=ylabel)
     ax.grid()
     if save_plots:
         script_dir = os.path.dirname(__file__)
@@ -154,12 +165,17 @@ def simulate_dps_echo_farming(weeks:int,n:int,character:ech.Character,tacet_fiel
         titstr2+='.png'
         plt.savefig('Output/Graphs/'+character._name+'/'+titstr2,format='png')
     
-
-    titstr3='All damages during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
+    
+    if is_support:
+        ylabel='average build quality at specific day'
+        titstr3='All build qualities during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
+    else:
+        ylabel='damage at specific day'
+        titstr3='All damages during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
     fig,ax=plt.subplots()
     for i in range(int(np.size(all_damages,0))):
         ax.plot(np.cumsum(list_of_days),all_damages[i],'.')
-    ax.set(title=titstr3,xlabel='day',ylabel='damage')
+    ax.set(title=titstr3,xlabel='day',ylabel=ylabel)
     if save_plots:
         script_dir = os.path.dirname(__file__)
         results_dir = os.path.join(script_dir, 'Output/Graphs/'+character._name+'/')
@@ -168,12 +184,14 @@ def simulate_dps_echo_farming(weeks:int,n:int,character:ech.Character,tacet_fiel
         titstr+='.png'
         plt.savefig('Output/Graphs/'+character._name+'/'+titstr3,format='png')
 
+
     titstr4='Tuner and exp costs during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
     fig,ax=plt.subplots()
     for i in range(int(np.size(all_tuners,0))):
         ax.plot(np.cumsum(list_of_days),all_tuners[i],color='y')
         ax.plot(np.cumsum(list_of_days),all_exp[i],color='m')
-    ax.set(title=titstr4,xlabel='day',ylabel='amount',label='tuners')
+    ax.set(title=titstr4,xlabel='day',ylabel='amount')
+    ax.legend(['tuners','exp'])
     if save_plots:
         script_dir = os.path.dirname(__file__)
         results_dir = os.path.join(script_dir, 'Output/Graphs/'+character._name+'/')

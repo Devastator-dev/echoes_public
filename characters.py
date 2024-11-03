@@ -16,3 +16,10 @@ Jinshi=ech.Character(ech.set_cl,10825,413,1259,125,13,150,ech.weapon_ages_of_har
 '''
 Jinshi with basic stats and banner 5* weapon. You can change weapon or prefered elemental bonus here
 '''
+
+
+Shorekeeper=ech.Character(ech.set_rg,16713,288,1100,125,5,150,ech.weapon_variation,'Shorekeeper',ech.main_er,12,0,0,12)
+'''
+Shorekeeper with basic stats and 4* weapon. You can change weapon or prefered elemental bonus here
+'''
+

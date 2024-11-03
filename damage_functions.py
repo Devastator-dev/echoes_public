@@ -211,6 +211,7 @@ def calculate_xiangli_combo_damage(character: ech.Character) -> float:
 
 def calculate_jinshi_combo_damage(character: ech.Character) -> float:
     """
+
     Calculates jinshi combo damage:
 
     Intro   1x 1 hits total \n
@@ -232,6 +233,7 @@ def calculate_jinshi_combo_damage(character: ech.Character) -> float:
     Incarnation: Basic P4   7x 63 hits total \n
     Skill: Illuminous Ephiphany Star DMG    6x 69 hits total \n
     Skill: Illuminous Ephiphany Sun DMG     1x 70 hits total \n
+    
     """
 
     total_attack = character._total_attack
@@ -356,14 +358,28 @@ def calculate_jinshi_combo_damage(character: ech.Character) -> float:
 
 
 
-
-
-
-
-
-
-
 def calculate_shorekeeper_build_quality(character:ech.Character)->float:
+    '''
+    Calculates build quality for Shorekeeper based on her optimal combo:
+    
+    Intro Skill: Discernment - Initial skill cast 3x  3
+
+    Discernment Healing: 289 + 1.32% HP  
+
+    Basic P1 - First basic attack 1x  4
+    Basic P2 - Second basic attack 2x  6
+    Basic P3 - Third basic attack 3x  9
+    Basic P4 - Fourth basic attack 1x  10
+    Forte: Heavy Atk: Illation - Enhanced heavy attack  5x  15
+    Skill: Chaos Theory - Second skill cast 1x  16
+
+    Healing: 1313 + 5.97% HP  
+
+    Liberation - Liberation attack 
+
+    Healing: 438 + 2.39% HP  10x
+    '''
+    
     quality_parameter=0
     total_er=character._total_er
     total_hp=character._total_hp
@@ -376,17 +392,33 @@ def calculate_shorekeeper_build_quality(character:ech.Character)->float:
     skill_dmg = character._skill_dmg / 100
     basic_dmg = character._basic_dmg / 100
     outro_dmg = character._outro_dmg / 100
+    heavy_dmg = character._heavy_dmg / 100
 
     if total_er==230:
         quality_parameter+=1000000
     elif (total_er<230) and (total_er>200):
-        quality_parameter+=700000
+        quality_parameter+=600000
     elif (total_er<200) and (total_er>170):
-        quality_parameter+=400000
+        quality_parameter+=300000
     elif total_er<170:
-        quality_parameter+=100000
+        quality_parameter+=90000
     elif total_er>230:
         quality_parameter+=900000
     
+    multipliers = np.array([0.1964, 0.1964, 0.1964, 0.2326, 0.1747, 0.1747, 0.1707, 0.1707, 0.1707, 0.5323,
+                            0.1389, 0.1389, 0.1389, 0.1389, 0.1389, 0.2729, 0.2729, 0.2729, 0.2729, 0.2729, 0.3131])
+    
+    total_heals=289+total_hp*0.0132+1313+total_hp*0.0597+(438+total_hp*0.0239)*10
+    quality_parameter+=total_heals*5
 
-    pass
+    bonus_types=np.array([total_elem_dmg,total_elem_dmg,total_elem_dmg,total_elem_dmg+basic_dmg,total_elem_dmg+basic_dmg,
+                          total_elem_dmg+basic_dmg,total_elem_dmg+basic_dmg,total_elem_dmg+basic_dmg,total_elem_dmg+basic_dmg,
+                          total_elem_dmg+basic_dmg,total_elem_dmg+heavy_dmg,total_elem_dmg+heavy_dmg,total_elem_dmg+heavy_dmg,
+                          total_elem_dmg+heavy_dmg,total_elem_dmg+heavy_dmg,total_elem_dmg,total_elem_dmg,total_elem_dmg
+                          ,total_elem_dmg,total_elem_dmg,total_elem_dmg+skill_dmg])
+    
+    crit = np.concatenate([np.ones(3), np.random.rand(18) < total_cr])
+
+    hit_damage=multipliers*total_attack*(1+bonus_types)*(1+((total_cd-1)*crit))
+    quality_parameter+=np.sum(hit_damage)
+    return quality_parameter

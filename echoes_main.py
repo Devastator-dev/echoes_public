@@ -77,6 +77,7 @@ W76 = "W76"
 H91 = "H91"
 H81 = "H81"
 Z01 = "Z01"
+X78 = "X78"
 
 set_ff='GlacioDMG_s'
 set_mr='FusionDMG_s'
@@ -147,12 +148,12 @@ for key in [R55, W62, H41, W61, H53, H49, H51, H54, Z11, W63, S06, H48, S55, W60
     echo_cost_dict[key] = echo_3_cost
 
 
-for key in [H80, H71, H72, W77, N74, R56, H73, W75, W76, H91, H81, Z01]:
+for key in [H80, H71, H72, W77, N74, R56, H73, W75, W76, H91, H81, Z01,X78]:
     echo_cost_dict[key] = echo_4_cost
 
 echo_cost_dict_sets={echo_1_cost:set([W27, H05,H05_a, H02, G05, H12, H11, H22, W25, S09, H09, N12, W30, W26, N11, H01, N13, W31, H15, H19, H21, H08, G02, N14, G04, X54, S08, G01, S05, G03, X53]),
                      echo_3_cost:set([R55, W62, H41, W61, H53, H49, H51, H54, Z11, W63, S06, H48, S55, W60, H42, H46]),
-                     echo_4_cost:set([H80, H71, H72, W77, N74, R56, H73, W75, W76, H91, H81, Z01])}
+                     echo_4_cost:set([H80, H71, H72, W77, N74, R56, H73, W75, W76, H91, H81, Z01,X78])}
 
 
 
@@ -165,7 +166,7 @@ full_sets[set_vt]=[W27,H05,W25,S09,W30,N13,N14,X54,S08,W61,Z11,H42,W75,W76]
 full_sets[set_sg]=[W27,H02,H22,W30,H19,H08,X54,G01,S05,R55,H41,H51,H71]
 full_sets[set_cl]=[G05,H12,W26,H01,N13,W31,H15,N14,G03,X53,H41,H54,W63,H73,Z01]
 full_sets[set_sse]=[H02,H05_a,N11,N13,W31,G04,S05,H49,S06,W60,H80,H81]
-full_sets[set_rg]=[H12,H22,S09,H09,G02,S08,G01,W62,H51,W63,S55,H91]
+full_sets[set_rg]=[H12,H22,S09,H09,G02,S08,G01,W62,H51,W63,S55,H91,X78]
 full_sets[set_mc]=[H91,R55,H12,H11,S09,H53,N11,H72,H08,H48,S55,H46,G01,G03]
 full_sets[set_lt]=[H05,H11,N12,H19,H21,G02,G04,S08,G03,W62,W61,H48,R56]
 
@@ -176,7 +177,7 @@ full_sets_as_sets[set_vt]=set([W27,H05,W25,S09,W30,N13,N14,X54,S08,W61,Z11,H42,W
 full_sets_as_sets[set_sg]=set([W27,H02,H22,W30,H19,H08,X54,G01,S05,R55,H41,H51,H71])
 full_sets_as_sets[set_cl]=set([G05,H12,W26,H01,N13,W31,H15,N14,G03,X53,H41,H54,W63,H73,Z01])
 full_sets_as_sets[set_sse]=set([H02,H05_a,N11,N13,W31,G04,S05,H49,S06,W60,H80,H81])
-full_sets_as_sets[set_rg]=set([H12,H22,S09,H09,G02,S08,G01,W62,H51,W63,S55,H91])
+full_sets_as_sets[set_rg]=set([H12,H22,S09,H09,G02,S08,G01,W62,H51,W63,S55,H91,X78])
 full_sets_as_sets[set_mc]=set([H91,R55,H12,H11,S09,H53,N11,H72,H08,H48,S55,H46,G01,G03])
 full_sets_as_sets[set_lt]=set([H05,H11,N12,H19,H21,G02,G04,S08,G03,W62,W61,H48,R56])
 
@@ -260,6 +261,8 @@ weapon_blazing_brilliance = 'blazing_brilliance'
 weapon_emerald_of_genesis = 'emerald_of_genesis'
 weapon_ages_of_harvest='ages_of_harvest'
 weapon_lustrous_razor='lustrous_razor'
+weapon_variation='variation'
+weapon_stellar_symphony='stellar_symphony'
 
 
 
@@ -272,16 +275,23 @@ weapons_stats_dict[weapon_blazing_brilliance] = [587, (48.6, sub_cd),(12, sub_at
 weapons_stats_dict[weapon_emerald_of_genesis]=[587, (24.3, sub_cr), (12.8, sub_er),(12, sub_atk_p)]
 weapons_stats_dict[weapon_ages_of_harvest]=[587,(24.4, sub_cr),(48,sub_skill_dmg),(12,weap_elem_dmg)]
 weapons_stats_dict[weapon_lustrous_razor]=[587,(12.8,sub_er),(21,sub_ult_dmg)]
+weapons_stats_dict[weapon_variation]=[337,(51.8,sub_er)]
+weapons_stats_dict[weapon_stellar_symphony]=[412,(77,sub_er),(12,sub_hp_p)]
+
 
 
 
 desired_mainstats_list_1cost_dps=(main_atk_p)
+desired_mainstats_list_1cost_healer=(main_hp_p)
 desired_mainstats_list_3cost_havoc_dps=(main_ha_dmg,main_atk_p)
 desired_mainstats_list_4cost_dps=(main_cd,main_cr,main_atk_p)
+desired_mainstats_list_4cost_healer=(main_cd,main_hb,main_hp_p)
 
 desired_mainstats_list_3cost_electro_dps=(main_el_dmg,main_atk_p)
 
 desired_mainstats_list_3cost_spectro_dps=(main_sp_dmg,main_atk_p)
+
+desired_mainstats_list_3cost_shore=(main_er,main_hp_p,main_sp_dmg)
 
 
 desired_mainstats_list_havoc_dps=[desired_mainstats_list_1cost_dps,desired_mainstats_list_3cost_havoc_dps,desired_mainstats_list_4cost_dps]
@@ -291,6 +301,8 @@ desired_mainstats_list_electro_dps=[desired_mainstats_list_1cost_dps,desired_mai
 
 
 desired_mainstats_list_spectro_dps=[desired_mainstats_list_1cost_dps,desired_mainstats_list_3cost_spectro_dps,desired_mainstats_list_4cost_dps]
+
+desired_mainstats_list_shore=[desired_mainstats_list_1cost_healer,desired_mainstats_list_3cost_shore,desired_mainstats_list_4cost_healer]
 
 
 echo_amounts_in_overworld={
@@ -461,7 +473,7 @@ class Echo:
 
 
 class Character:
-    def __init__(self,echo_set:str,hp:int,atk:int,defe:int,ener:int,cr:int,cd:int,weapon:str,name:str,desired_elem_bonus:str,hb:int=0,elem_dmg:int=0,atk_bonus:int=0,) -> None:
+    def __init__(self,echo_set:str,hp:int,atk:int,defe:int,ener:int,cr:int,cd:int,weapon:str,name:str,desired_elem_bonus:str,hb:int=0,elem_dmg:int=0,atk_bonus:int=0,hp_bonus:int=0) -> None:
         """
         Create character object with specified stats.
 
@@ -487,7 +499,7 @@ class Character:
         self._name=name
         self._desired_elem_bonus=desired_elem_bonus
 
-        self._total_hp=self._base_hp
+        self._total_hp=self._base_hp+(self._base_hp*(hp_bonus/100))
         self._total_attack=self._base_atk+(self._base_atk*(atk_bonus/100))
         self._total_defence=self._base_defence
         self._total_er=100
@@ -1359,7 +1371,10 @@ def simulate_rolling_echoes_n_days(n:int,overworld_farming:bool,sets_to_farm:lis
         echo_list.extend(rolled_lst[0])
     names_of_4cost=list(echo_cost_dict_sets[echo_4_cost].intersection(full_sets_as_sets[set_of_4cost]))
     for i in range(int((n/7)*15)):
-        echo_list.append(Echo(set_of_4cost,np.random.choice(names_of_4cost,None,False,[1/2,1/2])))
+        if len(names_of_4cost)>1:
+            echo_list.append(Echo(set_of_4cost,np.random.choice(names_of_4cost,None,False,[1/2,1/2])))
+        else:
+            echo_list.append(Echo(set_of_4cost,names_of_4cost[0]))  
     res_tup=(echo_list,rolled_lst[1],rolled_lst[2])
     return res_tup
 
