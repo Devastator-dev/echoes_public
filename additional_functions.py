@@ -1,5 +1,6 @@
 import echoes_main as ech
 import damage_functions as dmgfun
+import characters as char
 
 import numpy as np
 import matplotlib
@@ -63,6 +64,8 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
     dmg=0
     tuners_lst=[]
     exp_lst=[]
+    exps_costs=np.zeros((n,np.size(list_of_days)))
+    tuners_costs=np.zeros((n,np.size(list_of_days)))
     all_damages=np.zeros((n,np.size(list_of_days)))
     all_tuners=np.zeros((n,np.size(list_of_days)))
     all_exp=np.zeros((n,np.size(list_of_days)))
@@ -72,17 +75,23 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
         echo_lst=[]
         total_exp=0
         total_tuners=0
-        
+        exp_since_last_upgrade=0
+        tuners_since_last_upgrade=0
+        count=0
         for i in list_of_days:
             rolled_echoes_and_exp=ech.simulate_rolling_echoes_n_days(int(i),False,tacet_field_sets,desired_set)
             echo_lst=echo_lst+rolled_echoes_and_exp[0]
             total_exp+=rolled_echoes_and_exp[1]
+            exp_since_last_upgrade+=rolled_echoes_and_exp[1]
             total_tuners+=rolled_echoes_and_exp[2]
+            tuners_since_last_upgrade+=rolled_echoes_and_exp[2]
             inv=ech.Inventory(desired_mainstats_list,desired_set,previous_rolled_damage)
             dmg,previous_rolled_damage,echo_mats_used,tuners_used=inv.pick_best_echoes(echo_lst,character_cpy,character_dmgfun)
             damage_at_day+=dmg
             total_exp-=echo_mats_used
+            exp_since_last_upgrade-=echo_mats_used
             total_tuners-=tuners_used
+            tuners_since_last_upgrade-=tuners_used
             if total_exp<0:
                 exp_lst.append(-total_exp)
             if total_tuners<0:
@@ -96,10 +105,24 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
                         raise DamageIsLowerError
             except(IndexError):
                 pass
+            try:
+                if abs(damage_at_day-damages_through_days[-1])>5000:
+                    exps_costs[k,count] = -exp_since_last_upgrade
+                    tuners_costs[k,count] = -tuners_since_last_upgrade
+                    exp_since_last_upgrade=0
+                    tuners_since_last_upgrade=0
+            except(IndexError):
+                pass
             damages_through_days.append(damage_at_day)
             damage_at_day=0
             discarded+=echo_lst
             echo_lst=[]
+            count+=1
+            if count==np.size(list_of_days):
+                exps_costs[k,count-1] = -exp_since_last_upgrade
+                tuners_costs[k,count-1] = -tuners_since_last_upgrade
+                exp_since_last_upgrade=0
+                tuners_since_last_upgrade=0
         average_damages_through_days+=np.array(damages_through_days)
         all_damages[k,:]=np.array(damages_through_days)
         all_tuners[k,:]=np.array(tuners_lst)
@@ -129,6 +152,15 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
     average_damages_through_days=average_damages_through_days/n
     percentages_of_max=[i/max(average_damages_through_days) for i in average_damages_through_days]
 
+    if not is_support:
+        perfect_dmg_max=0
+        for i in range(100):
+            perfect_dmg_max+=character_dmgfun(char.maxes_dict[character._name])
+        perfect_dmg_max=perfect_dmg_max/100
+        percentages_of_perfection=[i/perfect_dmg_max for i in average_damages_through_days]
+
+
+
     fig,ax=plt.subplots()
     ax.plot(np.cumsum(list_of_days),average_damages_through_days,'.')
     if is_support:
@@ -138,6 +170,10 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
         titstr='Simulation of damage during echo farming for '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
         ylabel='average damage at specific day'
     ax.set(title=titstr ,xlabel='day',ylabel=ylabel)
+    if not is_support:
+        ax.legend(['average damage'])
+    else:
+        ax.legend(['average build quality'])
     ax.grid()
     if save_plots:
         script_dir = os.path.dirname(__file__)
@@ -146,14 +182,24 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
             os.makedirs(results_dir)
         titstr+='.png'
         plt.savefig('Output/Graphs/'+character._name+'/'+titstr,format='png')
+
+
+
+
+
     if is_support:
         ylabel='percentage of max build quality'
         titstr2='Percentage of max build quality during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
     else:
-        ylabel='percentage of max dmg'
-        titstr2='Percentage of max dmg during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
+        ylabel='percentage of max dmg and perfect dmg'
+        titstr2='Percentage of max dmg and perfect dmg during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
     fig,ax=plt.subplots()
     ax.plot(np.cumsum(list_of_days),percentages_of_max,'-.',marker='.')
+    if not is_support:
+        ax.plot(np.cumsum(list_of_days),percentages_of_perfection,'-.',marker='.')
+        ax.legend(['% of max dmg achieved','% of perfect dmg'])
+    else:
+        ax.legend(['% of max build quality'])
     ax.set(title=titstr2,xlabel='day',ylabel=ylabel)
     ax.grid()
     if save_plots:
@@ -161,13 +207,15 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
         results_dir = os.path.join(script_dir, 'Output/Graphs/'+character._name+'/')
         if not os.path.isdir(results_dir):
             os.makedirs(results_dir)
-        titstr+='.png'
         titstr2+='.png'
         plt.savefig('Output/Graphs/'+character._name+'/'+titstr2,format='png')
     
     
+
+
+
     if is_support:
-        ylabel='average build quality at specific day'
+        ylabel='build quality at specific day'
         titstr3='All build qualities during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
     else:
         ylabel='damage at specific day'
@@ -181,8 +229,12 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
         results_dir = os.path.join(script_dir, 'Output/Graphs/'+character._name+'/')
         if not os.path.isdir(results_dir):
             os.makedirs(results_dir)
-        titstr+='.png'
+        titstr3+='.png'
         plt.savefig('Output/Graphs/'+character._name+'/'+titstr3,format='png')
+
+
+
+
 
 
     titstr4='Tuner and exp costs during '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
@@ -197,6 +249,26 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
         results_dir = os.path.join(script_dir, 'Output/Graphs/'+character._name+'/')
         if not os.path.isdir(results_dir):
             os.makedirs(results_dir)
-        titstr+='.png'
+        titstr4+='.png'
         plt.savefig('Output/Graphs/'+character._name+'/'+titstr4,format='png')
+
+
+    titstr5='Tuner and exp costs per dmg increase for '+str(np.sum(list_of_days))+' days for '+character._name+' '+str(n)+' iterations'
+    fig,ax=plt.subplots()
+    for i in range(int(np.size(exps_costs,0))):
+        ax.plot(np.cumsum(list_of_days),exps_costs[i],'.',color='m')
+        ax.plot(np.cumsum(list_of_days),tuners_costs[i],'.',color='y')
+    ax.set(title=titstr5,xlabel='day',ylabel='cost')
+    ax.grid(True, which='both', linestyle='-', linewidth=0.5)
+    ax.semilogy()
+    ax.minorticks_on()
+    ax.legend(['exp','tuners'])
+    if save_plots:
+        script_dir = os.path.dirname(__file__)
+        results_dir = os.path.join(script_dir, 'Output/Graphs/'+character._name+'/')
+        if not os.path.isdir(results_dir):
+            os.makedirs(results_dir)
+        titstr5+='.png'
+        plt.savefig('Output/Graphs/'+character._name+'/'+titstr5,format='png')
+
     return average_damages_through_days,percentages_of_max,list_of_days

@@ -395,16 +395,16 @@ def calculate_shorekeeper_build_quality(character:ech.Character)->float:
     outro_dmg = character._outro_dmg / 100
     heavy_dmg = character._heavy_dmg / 100
 
-    if total_er==230:
-        quality_parameter+=1000000
+    if (total_er>=230) and (total_er<=240):
+        quality_parameter+=100000
     elif (total_er<230) and (total_er>200):
-        quality_parameter+=600000
+        quality_parameter+=60000
     elif (total_er<200) and (total_er>170):
-        quality_parameter+=300000
+        quality_parameter+=30000
     elif total_er<170:
+        quality_parameter+=9000
+    elif total_er>240:
         quality_parameter+=90000
-    elif total_er>230:
-        quality_parameter+=900000
     
     multipliers = np.array([0.1964, 0.1964, 0.1964, 0.2326, 0.1747, 0.1747, 0.1707, 0.1707, 0.1707, 0.5323,
                             0.1389, 0.1389, 0.1389, 0.1389, 0.1389, 0.2729, 0.2729, 0.2729, 0.2729, 0.2729, 0.3131])
