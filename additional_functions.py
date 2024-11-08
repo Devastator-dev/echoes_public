@@ -13,7 +13,11 @@ class DamageIsLowerError(Exception):
 
 
 
-def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_sets:list,desired_set:str,desired_mainstats_list:list,character_dmgfun,is_support:bool,save_plots=False,print_character=False):
+def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_sets:list,desired_set:str,
+                          desired_mainstats_list:list,character_dmgfun,is_support:bool,do_overworld_farming:bool=False,
+                          do_tacet_field_farming:bool=True,do_boss_farming:bool=True,
+                          amount_of_overworld_farming:float=0.5,amount_of_tacet_field_farming:int=4,
+                          amount_of_boss_farming:int=15,save_plots=False,print_character=False,goal_damage_percent:float=0.7):
     """
     Simulates echo rolling and damage or build quality for character passed as parameter
 
@@ -45,7 +49,25 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
 
     is_support : bool
         True if you want to calculate build quality
+
+    do_overworld_farming : bool, default:False
+        True if you want to simulate overworld farming
+
+    do_tacet_field_farming : bool,  default:True
+        True if you want to simulate tacet field farming
+
+    do_boss_farming : bool, default:True
+        True if you want to simulate boss farming
+
+    amount_of_overworld_farming : float, default:0.5
+        Amount of mobs to kill in overwolrd (1 means all, 0.5 means half)
     
+    amount_of_tacet_field_farming : int, default:4
+        Number of Tacet Field runs per day (max 4)
+
+    amount_of_boss_farming : int, default:15
+        Number of boss runs per week (max 15)
+
     save_plots : bool, default:False
         True if you want to save graphs
 
@@ -69,6 +91,16 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
     all_damages=np.zeros((n,np.size(list_of_days)))
     all_tuners=np.zeros((n,np.size(list_of_days)))
     all_exp=np.zeros((n,np.size(list_of_days)))
+    if not is_support:
+        perfect_dmg_max=0
+        for i in range(100):
+            perfect_dmg_max+=character_dmgfun(char.maxes_dict[character._name])
+        perfect_dmg_max=perfect_dmg_max/100
+        
+
+
+
+
     for k in range(n):
         character_cpy=character.character_deepcopy()
         character_cpy._apply_weapon_conditional_bonuses()
@@ -79,7 +111,8 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
         tuners_since_last_upgrade=0
         count=0
         for i in list_of_days:
-            rolled_echoes_and_exp=ech.simulate_rolling_echoes_n_days(int(i),False,tacet_field_sets,desired_set)
+            rolled_echoes_and_exp=ech.simulate_rolling_echoes_n_days(int(i),tacet_field_sets,desired_set,do_overworld_farming,do_tacet_field_farming,
+                                                                     do_boss_farming,amount_of_overworld_farming,amount_of_tacet_field_farming,amount_of_boss_farming)
             echo_lst=echo_lst+rolled_echoes_and_exp[0]
             total_exp+=rolled_echoes_and_exp[1]
             exp_since_last_upgrade+=rolled_echoes_and_exp[1]
@@ -114,6 +147,8 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
             except(IndexError):
                 pass
             damages_through_days.append(damage_at_day)
+            if damage_at_day/perfect_dmg_max>goal_damage_percent:
+                pass    #TODO add a stopping point for simulation
             damage_at_day=0
             discarded+=echo_lst
             echo_lst=[]
@@ -151,13 +186,7 @@ def simulate_echo_farming(weeks:int,n:int,character:ech.Character,tacet_field_se
             print('Tuners obtained: ',total_tuners)
     average_damages_through_days=average_damages_through_days/n
     percentages_of_max=[i/max(average_damages_through_days) for i in average_damages_through_days]
-
-    if not is_support:
-        perfect_dmg_max=0
-        for i in range(100):
-            perfect_dmg_max+=character_dmgfun(char.maxes_dict[character._name])
-        perfect_dmg_max=perfect_dmg_max/100
-        percentages_of_perfection=[i/perfect_dmg_max for i in average_damages_through_days]
+    percentages_of_perfection=[i/perfect_dmg_max for i in average_damages_through_days]
 
 
 

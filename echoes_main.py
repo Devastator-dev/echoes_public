@@ -10,6 +10,13 @@ class StatsLowerThanZeroError(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
+class ZeroFarmingError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+
+
 
 echo_1_cost='1'
 echo_3_cost='3'
@@ -17,7 +24,7 @@ echo_4_cost='4'
 
 echo_costs={echo_1_cost:1,echo_3_cost:3,echo_4_cost:4}
 
-# Code for every echo. You cant equip same echo twice
+
 W27 = "W27"
 H05_a = "H05_a"
 H05="H05"
@@ -205,8 +212,6 @@ mainstats_probability_cost_4_weights=[0.1666,0.1666,0.1666,0.1666,0.1666,0.1666]
 
 
 
-# Defining substat names, values and weights
-
 sub_hp='sub_HP'
 sub_atk='sub_ATK'
 sub_def='sub_DEF'
@@ -354,6 +359,9 @@ echo_amounts_in_overworld={
  'H42': 31,
  'H46': 27
 }
+
+echo_amounts_in_overworld_keys = list(echo_amounts_in_overworld.keys())
+
 
 sets_bonuses={
     set_ff:[[10,main_gl_dmg],[30,main_gl_dmg]],
@@ -1362,19 +1370,82 @@ def roll_tacet_field(set_:list):
 
 
 
-def simulate_rolling_echoes_n_days(n:int,overworld_farming:bool,sets_to_farm:list,set_of_4cost:str):
+def simulate_rolling_echoes_n_days(n:int,sets_to_farm:list,set_of_4cost:str,overworld_farming:bool=False,
+                                   tacet_field_farming:bool=True,boss_farming:bool=True,amount_of_overworld_farming:float=1,
+                                   amount_of_tacet_field_farming:int=4,amount_of_boss_farming:int=15):
+    """
+    Simulates rolling echoes over n days from various farming sources.
+
+    Parameters
+    ----------
+    n : int
+        Number of days to simulate rolling echoes.
+
+    sets_to_farm : list
+        List of two sets to farm from Tacet Field.
+
+    set_of_4cost : str
+        Set of 4-cost echoes.
+
+    overworld_farming : bool, default=False
+        Whether to include overworld farming.
+
+    tacet_field_farming : bool, default=True
+        Whether to include Tacet Field farming.
+
+    boss_farming : bool, default=True
+        Whether to include boss farming.
+
+    amount_of_overworld_farming : float, default=1
+        Fraction of overworld mobs to farm (0-1).
+
+    amount_of_tacet_field_farming : int, default=4
+        Number of Tacet Field runs per day (max 4).
+
+    amount_of_boss_farming : int, default=15
+        Number of boss runs per week (max 15).
+
+    Returns
+    -------
+    tuple
+        Contains:
+        - List of Echo objects obtained from farming
+        - Amount of exp materials obtained
+        - Amount of tuners obtained
+
+    Raises
+    ------
+    ZeroFarmingError
+        If any enabled farming source has amount set to 0.
+    """
+
+
     echo_list=[]
-    if overworld_farming:  #TODO implement overworld farming
-        pass
-    for i in range(int(n*4)):
-        rolled_lst=roll_tacet_field(sets_to_farm)
-        echo_list.extend(rolled_lst[0])
-    names_of_4cost=list(echo_cost_dict_sets[echo_4_cost].intersection(full_sets_as_sets[set_of_4cost]))
-    for i in range(int((n/7)*15)):
-        if len(names_of_4cost)>1:
-            echo_list.append(Echo(set_of_4cost,np.random.choice(names_of_4cost,None,False,[1/2,1/2])))
-        else:
-            echo_list.append(Echo(set_of_4cost,names_of_4cost[0]))  
+    if overworld_farming:
+        if amount_of_overworld_farming==0:
+            raise(ZeroFarmingError)
+        amounts_of_echoes=np.array(list(echo_amounts_in_overworld.values()))*amount_of_overworld_farming
+        amounts_of_echoes=amounts_of_echoes.astype(int)
+        for k in range(n):
+            for i in range(len(amounts_of_echoes)):
+                random_drops=np.random.random(amounts_of_echoes[i])
+                for j in range(int(amounts_of_echoes[i])):
+                    if random_drops[j]<0.2:
+                        echo_list.append(Echo(np.random.choice(echo_sets[echo_amounts_in_overworld_keys[i]]),echo_amounts_in_overworld_keys[i]))
+    if tacet_field_farming:
+        if amount_of_tacet_field_farming==0:
+            raise(ZeroFarmingError)
+        for i in range(int(n*amount_of_tacet_field_farming)):
+            rolled_lst=roll_tacet_field(sets_to_farm)
+            echo_list.extend(rolled_lst[0])
+    if boss_farming:
+        if amount_of_boss_farming==0:
+            raise(ZeroFarmingError)
+        names_of_4cost=list(echo_cost_dict_sets[echo_4_cost].intersection(full_sets_as_sets[set_of_4cost]))
+        for i in range(int((n/7)*amount_of_boss_farming)):
+            if len(names_of_4cost)>1:
+                echo_list.append(Echo(set_of_4cost,np.random.choice(names_of_4cost,None,False,[1/2,1/2])))
+            else:
+                echo_list.append(Echo(set_of_4cost,names_of_4cost[0]))  
     res_tup=(echo_list,rolled_lst[1],rolled_lst[2])
     return res_tup
-
