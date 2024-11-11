@@ -481,7 +481,7 @@ class Echo:
 
 
 class Character:
-    def __init__(self,echo_set:str,hp:int,atk:int,defe:int,ener:int,cr:int,cd:int,weapon:str,name:str,desired_elem_bonus:str,hb:int=0,elem_dmg:int=0,atk_bonus:int=0,hp_bonus:int=0) -> None:
+    def __init__(self,echo_set:str,hp:int,atk:int,defe:int,ener:int,cr:int,cd:int,weapon:str,name:str,desired_elem_bonus:str,is_support:bool,desired_mainstats_list:list,desired_echo_set:str,hb:int=0,elem_dmg:int=0,atk_bonus:int=0,hp_bonus:int=0) -> None:
         """
         Create character object with specified stats.
 
@@ -506,6 +506,9 @@ class Character:
         self._weapon=weapon
         self._name=name
         self._desired_elem_bonus=desired_elem_bonus
+        self._is_support=is_support
+        self._desired_echo_set=desired_echo_set
+        self._desired_mainstats_list=desired_mainstats_list
 
         self._total_hp=self._base_hp+(self._base_hp*(hp_bonus/100))
         self._total_attack=self._base_atk+(self._base_atk*(atk_bonus/100))
@@ -528,6 +531,7 @@ class Character:
         self._num_of_1cost=0
         self._num_of_3cost=0
         self._num_of_4cost=0
+        
         pass
 
 
@@ -1328,6 +1332,75 @@ class Inventory():
             damage_final+=damage_function(character)
         
         return (damage_final/10000,self._calculated_damage,exp_mats_used,tuners_used)
+
+
+
+
+
+
+class GlobalSimulationRules():
+    '''
+    Class that contains global simulation rules
+
+    Parameters
+    ----------
+    weeks_to_simulate : int
+        Number of weeks to simulate echo farming
+
+    n : int 
+        Number of simulation iterations
+
+    do_overworld_farming : bool, optional
+        Whether to simulate overworld farming, by default False
+
+    do_tacet_field_farming : bool, optional
+        Whether to simulate tacet field farming, by default True
+
+    do_boss_farming : bool, optional
+        Whether to simulate boss farming, by default True
+
+    amount_of_overworld_farming : float, optional
+        Percent of overworld mobs to farm, by default 0.5
+
+    amount_of_tacet_field_farming : int, optional
+        Number of tacet field runs per day, by default 4
+
+    amount_of_boss_farming : int, optional
+        Number of boss runs per week, by default 15
+
+    save_plots : bool, optional
+        Whether to save generated plots, by default False
+
+    print_character : bool, optional
+        Whether to print character stats, by default False
+
+    goal_damage_percent : float, optional
+        Target damage percentage to reach, by default 0.7
+
+    stop_after_goal_damage : bool, optional
+        Whether to stop simulation after reaching goal damage, makes n=1 so the graphs make sense, by default False
+
+    '''
+    def __init__(self,weeks_to_simulate:int,n:int,do_overworld_farming:bool=False,
+                 do_tacet_field_farming:bool=True,do_boss_farming:bool=True,amount_of_overworld_farming:float=0.5,
+                 amount_of_tacet_field_farming:int=4,amount_of_boss_farming:int=15,save_plots=False,
+                 print_character=False,goal_damage_percent:float=0.7,stop_after_goal_damage:bool=False):
+        
+        self._weeks_to_simulate=weeks_to_simulate
+        self._n=n
+        self._do_overworld_farming=do_overworld_farming
+        self._do_tacet_field_farming=do_tacet_field_farming
+        self._do_boss_farming=do_boss_farming
+        self._amount_of_overworld_farming=amount_of_overworld_farming
+        self._amount_of_tacet_field_farming=amount_of_tacet_field_farming
+        self._amount_of_boss_farming=amount_of_boss_farming
+        self._save_plots=save_plots
+        self._print_character=print_character
+        self._goal_damage_percent=goal_damage_percent
+        self._stop_after_goal_damage=stop_after_goal_damage
+        if self._stop_after_goal_damage:
+            self._n=1
+
 
 
 
